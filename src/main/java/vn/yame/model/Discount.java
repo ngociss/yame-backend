@@ -1,0 +1,50 @@
+package vn.yame.model;
+
+
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+import vn.yame.common.enums.DiscountStatus;
+import vn.yame.common.enums.DiscountType;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
+@Entity
+@Table(name = "discounts")
+@Getter
+@Setter
+public class Discount {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private String code;
+    private String description;
+    @Enumerated(EnumType.STRING)
+    private DiscountType type;
+    @Enumerated(EnumType.STRING)
+    private DiscountStatus status;
+    @Column(precision = 10, scale = 2)
+    private BigDecimal discountValue;
+
+    private Double minOrderAmount;
+    private Double maxDiscountAmount;
+    private Integer usageLimit;
+    private LocalDateTime startAt;
+    private LocalDateTime endAt;
+
+    @CreationTimestamp
+    private LocalDateTime createdAt;
+
+    @UpdateTimestamp
+    private LocalDateTime updatedAt;
+    private boolean isVerified;
+
+    @OneToMany
+    @JoinColumn(name = "discount_id")
+    private java.util.List<Order> orders;
+
+
+}
