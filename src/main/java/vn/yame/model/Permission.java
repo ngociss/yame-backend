@@ -35,10 +35,7 @@ public class Permission {
     @ManyToOne
     @JoinColumn(name = "role_id")
     private Role role;
-
-    @ManyToMany(mappedBy = "permissions")
-    private Set<User> users = new HashSet<>();
-
+    
     @ManyToOne
     @JoinColumn(name = "resource_id")
     private Resource resource;
