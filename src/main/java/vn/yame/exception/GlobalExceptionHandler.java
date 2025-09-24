@@ -55,4 +55,10 @@ public class GlobalExceptionHandler {
         return buildResponse(HttpStatus.BAD_REQUEST, "Existing Resource", ex.getMessage());
     }
 
+    @ExceptionHandler(InvalidDataException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<ResponseData<Object>> handleInvalidDataException(InvalidDataException ex) {
+        return buildResponse(HttpStatus.BAD_REQUEST, "Invalid Data", ex.getMessage());
+    }
+
 }

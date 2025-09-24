@@ -1,5 +1,7 @@
 package vn.yame.service;
 
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import vn.yame.dto.reponse.UserResponse;
 import vn.yame.dto.request.UserCreateRequest;
 import vn.yame.dto.request.UserUpdateRequest;
@@ -8,6 +10,8 @@ import vn.yame.model.User;
 import java.util.List;
 
 public interface UserService {
+
+    UserDetailsService userDetailsService();
 
     public List<UserResponse> fetchAllUsers();
 

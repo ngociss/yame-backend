@@ -34,3 +34,11 @@ openapi:
     title: Backend service
     version: 1.0.0
 
+jwt:
+  access-expiry: 1m
+  refresh-expiry: 14d
+
+  secretKey: 93706878cb8f89019621b0067e944224d311b5e6d0635f0230001e07c2c73b1c
+  refreshKey: SN4n2ahiSXMlt2y7JSXcE8sNDTFm3hhyDBtFIYlt68w=
+
+

@@ -2,6 +2,7 @@ package vn.yame.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 import vn.yame.common.enums.UserStatus;
 import vn.yame.dto.reponse.AddressResponse;
@@ -32,6 +33,15 @@ public class UserServiceImpl implements UserService {
     private final RoleRepository roleRepository;
     private final AddressMapper addressMapper;
 
+
+    @Override
+    public UserDetailsService userDetailsService() {
+        return email -> {
+            System.out.println(">>> Đang login với email: [" + email + "]");
+            return userRepository.findByEmail(email)
+                    .orElseThrow(() -> new NotFoundResourcesException("User not found with email: " + email));
+        };
+    }
 
     @Override
     public List<UserResponse> fetchAllUsers() {
