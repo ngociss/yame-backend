@@ -65,4 +65,18 @@ public class AuthenticationController {
                         null
                 ));
     }
+
+    @PostMapping("/forgot")
+    @Operation(summary = "Forgot password", description = "Initiate password reset process for the user" )
+    public ResponseEntity<ResponseData<String>> forgotPassword (@RequestBody String email) {
+        String message = authenticationService.forgotPassword(email);
+        return ResponseEntity.ok(ResponseData
+                .success(
+                        HttpStatus.OK.value(),
+                        true,
+                        message,
+                        null
+                ));
+    }
+
 }
