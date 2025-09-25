@@ -2,7 +2,9 @@ package vn.yame.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import vn.yame.common.enums.UserStatus;
 import vn.yame.dto.reponse.AddressResponse;
@@ -23,6 +25,10 @@ import vn.yame.service.UserService;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import static java.rmi.server.LogStream.log;
 
 @Service
 @Slf4j(topic = "USERSERVICE")
@@ -32,6 +38,7 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
     private final RoleRepository roleRepository;
     private final AddressMapper addressMapper;
+    private final @Lazy PasswordEncoder passwordEncoder;
 
 
     @Override
@@ -57,10 +64,13 @@ public class UserServiceImpl implements UserService {
         if (userRepository.existsByEmail(req.getEmail())) {
             throw new ExistingResourcesException("Email already exists");
         }
-        Role role = roleRepository.findByName(req.getRoleName());
+        Set<Role> roles = req.getRoleNames().stream()
+                .map(roleRepository::findByName)
+                .collect(Collectors.toSet());
         User user = userMapper.toEntity(req);
-        user.setRole(role);
+        user.setRoles(roles);
         user.setStatus(UserStatus.ACTIVE);
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         User savedUser = userRepository.save(user);
         UserResponse response = userMapper.toResponse(savedUser);
         return response;

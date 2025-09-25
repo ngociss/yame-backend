@@ -1,7 +1,9 @@
 package vn.yame.exception;
 
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -60,5 +62,24 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ResponseData<Object>> handleInvalidDataException(InvalidDataException ex) {
         return buildResponse(HttpStatus.BAD_REQUEST, "Invalid Data", ex.getMessage());
     }
+
+//    @ExceptionHandler(NullPointerException.class)
+//    @ResponseStatus(HttpStatus.BAD_REQUEST)
+//    public ResponseEntity<ResponseData<Object>> handleNullPointerException(NullPointerException ex) {
+//        return buildResponse(HttpStatus.BAD_REQUEST, "Invalid Data", ex.getMessage());
+//    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ResponseData<Object>> handleHttpMessageNotReadable(HttpMessageNotReadableException ex) {
+        ResponseData<Object> res = new ResponseData<>();
+        res.setStatusCode(HttpServletResponse.SC_BAD_REQUEST); // 400
+        res.setSuccess(false);
+        res.setError("Bad Request");
+        res.setMessage(ex.getLocalizedMessage());
+        return ResponseEntity.badRequest().body(res);
+    }
+
+
+
 
 }

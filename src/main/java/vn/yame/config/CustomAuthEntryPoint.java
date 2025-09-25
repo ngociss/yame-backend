@@ -23,7 +23,7 @@ public class CustomAuthEntryPoint implements AuthenticationEntryPoint {
                          AuthenticationException authException) throws IOException {
 
         response.setContentType("application/json;charset=UTF-8");
-        response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // 🔹 dùng 401 thay vì 403
 
         String message;
         String error;
@@ -46,13 +46,9 @@ public class CustomAuthEntryPoint implements AuthenticationEntryPoint {
         }
 
         ResponseData<Object> res = new ResponseData<>();
-        res.setStatusCode(HttpServletResponse.SC_FORBIDDEN);
+        res.setStatusCode(HttpServletResponse.SC_UNAUTHORIZED); // 🔹 đồng bộ với status response
         res.setSuccess(false);
         res.setError(error);
         res.setMessage(message);
-
-        ObjectMapper mapper = new ObjectMapper();
-        response.getWriter().write(mapper.writeValueAsString(res));
     }
 }
-

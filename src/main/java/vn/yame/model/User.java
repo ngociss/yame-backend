@@ -78,11 +78,15 @@ public class User implements UserDetails, Serializable {
     @OneToMany(mappedBy = "user")
     private List<Address> addresses;
 
-    @ManyToOne
-    @JoinColumn(name = "role_id")
-    private Role role;
-
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private Cart cart;
+
+    @ManyToMany
+    @JoinTable(
+            name = "role_user",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+    private Set<Role> roles = new HashSet<>();
 
 }

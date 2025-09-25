@@ -23,5 +23,4 @@ public class UserRequest implements Serializable {
     private String password;
     @Pattern(regexp = "^[+]?[0-9]{10,15}$", message = "Phone number must be valid")
     private String phoneNumber;
-    private List<AddressRequest> addresses;
 }

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import vn.yame.dto.reponse.ResponseData;
 import vn.yame.dto.reponse.TokenResponse;
+import vn.yame.dto.request.ResetPasswordRequest;
 import vn.yame.dto.request.SignInRequest;
 import vn.yame.service.AuthenticationService;
 
@@ -70,6 +71,32 @@ public class AuthenticationController {
     @Operation(summary = "Forgot password", description = "Initiate password reset process for the user" )
     public ResponseEntity<ResponseData<String>> forgotPassword (@RequestBody String email) {
         String message = authenticationService.forgotPassword(email);
+        return ResponseEntity.ok(ResponseData
+                .success(
+                        HttpStatus.OK.value(),
+                        true,
+                        message,
+                        null
+                ));
+    }
+
+    @PostMapping("/reset")
+    @Operation(summary = "Reset password", description = "Reset the user's password using the provided token and new password" )
+    public ResponseEntity<ResponseData<String>> resetPassword (@RequestBody  String secretKey) {
+        String message = authenticationService.resetPassword(secretKey);
+        return ResponseEntity.ok(ResponseData
+                .success(
+                        HttpStatus.OK.value(),
+                        true,
+                        message,
+                        null
+                ));
+    }
+
+    @PostMapping("/change-password")
+    @Operation(summary = "Change password", description = "Change the user's password" )
+    public ResponseEntity<ResponseData<String>> changePassword (@RequestBody ResetPasswordRequest resetPasswordRequest) {
+        String message =  authenticationService.changePassword(resetPasswordRequest);
         return ResponseEntity.ok(ResponseData
                 .success(
                         HttpStatus.OK.value(),

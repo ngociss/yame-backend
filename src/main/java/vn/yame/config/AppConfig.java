@@ -54,8 +54,8 @@ public class AppConfig {
 
     @Bean
     public PasswordEncoder getPasswordEncoder() {
-        return NoOpPasswordEncoder.getInstance();
-//        return new BCryptPasswordEncoder();
+//        return NoOpPasswordEncoder.getInstance();
+        return new BCryptPasswordEncoder();
     }
 
     @Bean

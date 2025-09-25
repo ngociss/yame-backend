@@ -5,6 +5,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import vn.yame.dto.reponse.ResponseData;
 import vn.yame.dto.reponse.UserResponse;
@@ -61,6 +63,11 @@ public class UserController {
         userService.softDeleteUser(id);
         return ResponseEntity.ok(ResponseData.success(HttpStatus.OK.value(), true, "User deleted successfully", null));
     }
+
+
+
+
+
 
 
 }

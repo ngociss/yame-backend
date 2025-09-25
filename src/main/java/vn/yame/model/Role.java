@@ -29,9 +29,6 @@ public class Role {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
-    @OneToMany(mappedBy = "role")
-    private List<User> users;
-
     @ManyToMany
     @JoinTable(
             name = "role_permission",
@@ -39,5 +36,9 @@ public class Role {
             inverseJoinColumns = @JoinColumn(name = "permission_id")
     )
     private Set<Permission> permissions = new HashSet<>();
+
+    @ManyToMany(mappedBy = "roles")
+    private Set<User> users = new HashSet<>();
+
 
 }

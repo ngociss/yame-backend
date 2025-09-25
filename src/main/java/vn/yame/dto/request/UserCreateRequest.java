@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.util.List;
 
 @Getter
 @Setter
@@ -13,5 +14,5 @@ public class UserCreateRequest extends UserRequest implements Serializable {
     @Email(message = "Email should be valid")
     @NotBlank(message = "Email is mandatory")
     private String email;
-    private String RoleName;
+    private List <String> roleNames;
 }

@@ -49,7 +49,22 @@ public class PreFilter extends OncePerRequestFilter {
 
         if (StringUtils.isNotEmpty(username) && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = userService.userDetailsService().loadUserByUsername(username);
-            if (jwtService.isTokenValid(token, userDetails, TokenType.ACCESS)) {
+//            if (jwtService.isTokenValid(token, userDetails, TokenType.ACCESS)) {
+//                SecurityContext context = SecurityContextHolder.createEmptyContext();
+//                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+//                        userDetails,
+//                        null,
+//                        userDetails.getAuthorities()
+//                );
+//                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+//                context.setAuthentication(authToken);
+//                SecurityContextHolder.setContext(context);
+//
+//            }
+            boolean isValid = jwtService.isTokenValid(token, userDetails, TokenType.ACCESS);
+            log.info("Token valid? {}", isValid);
+
+            if (isValid) {
                 SecurityContext context = SecurityContextHolder.createEmptyContext();
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                         userDetails,
@@ -59,8 +74,8 @@ public class PreFilter extends OncePerRequestFilter {
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 context.setAuthentication(authToken);
                 SecurityContextHolder.setContext(context);
-
             }
+
         }
         filterChain.doFilter(request, response);
 

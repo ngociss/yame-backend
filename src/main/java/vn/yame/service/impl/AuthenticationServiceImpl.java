@@ -6,9 +6,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import vn.yame.common.enums.TokenType;
 import vn.yame.dto.reponse.TokenResponse;
+import vn.yame.dto.request.ResetPasswordRequest;
 import vn.yame.dto.request.SignInRequest;
 import vn.yame.exception.InvalidDataException;
 import vn.yame.model.Token;
@@ -28,6 +30,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
     private final TokenService tokenService;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public TokenResponse authenticate(SignInRequest signInRequest) {
@@ -120,5 +123,55 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         Token token = tokenService.getByUsername(username) ;
         tokenService.delete(token);
         return "Logout successfully";
+    }
+
+    @Override
+    public String forgotPassword(String email) {
+        //check email exists
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new InvalidDataException("Email not found"));
+
+        // user is active
+        if (!user.getStatus().name().equals("ACTIVE")) {
+            throw new InvalidDataException("User is not active");
+        }
+        // generate reset tokem
+        String resetToken = jwtService.generateResetToken(user);
+
+        // send email confirm
+        String confirmLink = "http://localhost:8080/api/v1/auth/reset";
+
+        return "We have sent a password reset link to your email: " + email + ". Please check your inbox. " + confirmLink;
+    }
+
+    @Override
+    public String resetPassword(String secretKey) {
+        log.info("=====================Reset Password============");
+
+        // extract username from refreshToken
+        User user = isValidUserByToken(secretKey, TokenType.RESET);
+        return "Reset password successfully" ;
+    }
+
+    @Override
+    public String changePassword(ResetPasswordRequest resetPasswordRequest) {
+        User user = isValidUserByToken(resetPasswordRequest.getSecretKey(), TokenType.RESET);
+        if (!resetPasswordRequest.getNewPassword().equals(resetPasswordRequest.getConfirmPassword())) {
+            throw new InvalidDataException("Password and Confirm Password do not match");
+        }
+        user.setPassword(passwordEncoder.encode(resetPasswordRequest.getNewPassword()));
+        userRepository.save(user);
+        return "Change password successfully";
+    }
+
+    private User isValidUserByToken(String token, TokenType tokenType) {
+        String username = jwtService.exTractUsername(token, tokenType);
+        User user = userRepository.findByEmail(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (!jwtService.isTokenValid(token, user, tokenType)) {
+            throw new InvalidDataException("Token is invalid or expired");
+        }
+        return user;
     }
 }

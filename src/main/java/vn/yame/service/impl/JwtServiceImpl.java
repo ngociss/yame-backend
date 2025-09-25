@@ -28,11 +28,19 @@ public class JwtServiceImpl implements JwtService {
     @Value("${jwt.refresh-expiry}")
     private Duration refreshExpiry;
 
+    @Value("${jwt.reset-expiry}")
+    private Duration resetExpiry;
+
     @Value("${jwt.secretKey}")
     private String jwtSecretKey;
 
     @Value("${jwt.refreshKey}")
     private String jwtRefreshKey;
+
+    @Value("${jwt.resetKey}")
+    private String jwtResetKey;
+
+
 
     @Override
     public String generateToken(UserDetails userDetails) {
@@ -42,6 +50,11 @@ public class JwtServiceImpl implements JwtService {
     @Override
     public String generateRefreshToken(UserDetails userDetails) {
         return generateToken(userDetails, refreshExpiry, TokenType.REFRESH);
+    }
+
+    @Override
+    public String generateResetToken(UserDetails userDetails) {
+        return generateToken(userDetails, resetExpiry, TokenType.RESET);
     }
 
 
@@ -107,8 +120,10 @@ public class JwtServiceImpl implements JwtService {
         byte[] keyBytes;
         if (tokenType == TokenType.ACCESS) {
            keyBytes = Decoders.BASE64.decode(jwtSecretKey);
-        } else {
+        } else if (tokenType == TokenType.REFRESH) {
             keyBytes =  Decoders.BASE64.decode(jwtRefreshKey);
+        } else  {
+            keyBytes =  Decoders.BASE64.decode(jwtResetKey);
         }
         return Keys.hmacShaKeyFor(keyBytes);
     }

@@ -7,6 +7,7 @@ import vn.yame.common.enums.UserStatus;
 import vn.yame.model.Address;
 
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -17,6 +18,6 @@ public class UserResponse {
     private Gender gender;
     private UserStatus status;
     private String fullName;
-    private String roleName;
+    private Set<String> roleNames;
 
 }

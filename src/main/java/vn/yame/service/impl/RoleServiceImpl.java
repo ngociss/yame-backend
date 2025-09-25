@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import vn.yame.dto.reponse.RoleResponse;
 import vn.yame.dto.request.RoleRequest;
 import vn.yame.exception.ExistingResourcesException;
+import vn.yame.exception.NotFoundResourcesException;
 import vn.yame.mapper.RoleMapper;
 import vn.yame.model.Role;
 import vn.yame.repository.RoleRepository;
@@ -30,12 +31,15 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     public List<RoleResponse> findAllRoles() {
-        return List.of();
+        List<Role> roles = roleRepository.findAll();
+        return roles.stream().map(roleMapper::toResponse).toList();
     }
 
     @Override
     public RoleResponse findRoleById(Long id) {
-        return null;
+        Role role = roleRepository.findRoleById(id)
+                .orElseThrow(() -> new NotFoundResourcesException("Role with id " + id + " not found"));
+        return roleMapper.toResponse(role);
     }
 
     @Override

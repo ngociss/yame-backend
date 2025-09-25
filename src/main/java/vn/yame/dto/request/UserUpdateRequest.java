@@ -8,4 +8,5 @@ import java.io.Serializable;
 @Getter
 public class UserUpdateRequest extends UserRequest implements Serializable {
     private UserStatus status;
+    private String RoleName;
 }
