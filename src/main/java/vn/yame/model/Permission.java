@@ -7,9 +7,6 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -20,23 +17,33 @@ public class Permission {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(nullable = false, unique = true)
     private String name;
+
     private String description;
+
+    @Column(nullable = false, unique = true)
     private String code;
-    private boolean isActive;
+
+    @Column(name = "is_active")
+    private boolean isActive = true;
+
+    @Column(name = "is_verified")
+    private boolean isVerified = false;
 
     @CreationTimestamp
+    @Column(name = "created_at")
     private LocalDateTime createdAt;
 
     @UpdateTimestamp
+    @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-    private boolean isVerified;
 
-    @ManyToOne
-    @JoinColumn(name = "role_id")
-    private Role role;
-    
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "resource_id")
     private Resource resource;
+
+    @ManyToMany(mappedBy = "permissions")
+    private Set<Role> roles;
 }

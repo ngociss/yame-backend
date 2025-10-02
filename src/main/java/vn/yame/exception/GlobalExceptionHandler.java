@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -77,6 +78,16 @@ public class GlobalExceptionHandler {
         res.setError("Bad Request");
         res.setMessage(ex.getLocalizedMessage());
         return ResponseEntity.badRequest().body(res);
+    }
+
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public ResponseEntity<ResponseData<Object>> handleHttpRequestMethodNotSupported(HttpRequestMethodNotSupportedException ex) {
+        ResponseData<Object> res = new ResponseData<>();
+        res.setStatusCode(HttpServletResponse.SC_METHOD_NOT_ALLOWED); // 405
+        res.setSuccess(false);
+        res.setError("Method Not Allowed");
+        res.setMessage(ex.getLocalizedMessage());
+        return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(res);
     }
 
 
