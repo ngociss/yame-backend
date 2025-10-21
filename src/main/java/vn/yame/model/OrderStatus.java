@@ -12,10 +12,7 @@ import java.util.List;
 @Table(name = "order_status")
 @Getter
 @Setter
-public class OrderStatus {
-    @Id
-    @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
-    private Long id;
+public class OrderStatus extends BaseEntity {
     private String name;
     private String description;
     private String code;

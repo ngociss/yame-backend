@@ -8,10 +8,7 @@ import lombok.Setter;
 @Table(name = "cart_items")
 @Getter
 @Setter
-public class CartItem {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class CartItem extends BaseEntity {
     private int quantity;
 
     @ManyToOne
@@ -21,7 +18,4 @@ public class CartItem {
     @ManyToOne
     @JoinColumn(name = "product_variant_id", nullable = false)
     private ProductVariant productVariant;
-
-
-
 }

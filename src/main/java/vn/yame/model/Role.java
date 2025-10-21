@@ -4,30 +4,17 @@ package vn.yame.model;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
-import java.time.LocalDateTime;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Entity
 @Table(name = "roles")
 @Getter
 @Setter
-
-public class Role {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class Role extends BaseEntity {
     private String name;
     private String description;
-    @CreationTimestamp
-    private LocalDateTime createdAt;
-    
-    @UpdateTimestamp
-    private LocalDateTime updatedAt;
 
     @ManyToMany
     @JoinTable(
@@ -39,6 +26,4 @@ public class Role {
 
     @ManyToMany(mappedBy = "roles")
     private Set<User> users = new HashSet<>();
-
-
 }

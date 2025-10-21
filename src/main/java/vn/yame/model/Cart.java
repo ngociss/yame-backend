@@ -3,24 +3,12 @@ package vn.yame.model;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "carts")
 @Getter
 @Setter
-public class Cart {
-    @jakarta.persistence.Id
-    @jakarta.persistence.GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
-    private Long id;
-    @CreationTimestamp
-    private LocalDateTime createdAt;
-
-    @UpdateTimestamp
-    private LocalDateTime updatedAt;
+public class Cart extends BaseEntity {
     private boolean isVerified;
 
     @OneToOne
@@ -30,6 +18,4 @@ public class Cart {
     @OneToMany
     @JoinColumn(name = "cart_id")
     private java.util.List<CartItem> cartItems;
-
-
 }

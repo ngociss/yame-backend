@@ -13,10 +13,7 @@ import java.time.LocalDateTime;
 @Table(name = "payments")
 @Getter
 @Setter
-public class Payment {
-    @jakarta.persistence.Id
-    @jakarta.persistence.GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
-    private Long id;
+public class Payment extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     private PaymentMethod method;

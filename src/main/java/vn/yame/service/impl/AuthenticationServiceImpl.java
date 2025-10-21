@@ -8,11 +8,18 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import vn.yame.common.enums.ErrorCode;
 import vn.yame.common.enums.TokenType;
+import vn.yame.common.enums.UserStatus;
 import vn.yame.dto.reponse.TokenResponse;
+import vn.yame.dto.reponse.UserResponse;
+import vn.yame.dto.request.RegisterRequest;
 import vn.yame.dto.request.ResetPasswordRequest;
 import vn.yame.dto.request.SignInRequest;
+import vn.yame.exception.ExistingResourcesException;
 import vn.yame.exception.InvalidDataException;
+import vn.yame.mapper.UserMapper;
 import vn.yame.model.Token;
 import vn.yame.model.User;
 import vn.yame.repository.UserRepository;
@@ -31,6 +38,43 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final JwtService jwtService;
     private final TokenService tokenService;
     private final PasswordEncoder passwordEncoder;
+    private final UserMapper userMapper;
+
+    @Override
+    @Transactional
+    public UserResponse register(RegisterRequest registerRequest) {
+        log.info("Registering new user with email: {}", registerRequest.getEmail());
+
+        // Validate password confirmation
+        if (!registerRequest.getPassword().equals(registerRequest.getConfirmPassword())) {
+            throw new InvalidDataException(
+                ErrorCode.PASSWORD_MISMATCH,
+                "Password and confirm password do not match"
+            );
+        }
+
+        // Check if email already exists
+        if (userRepository.existsByEmail(registerRequest.getEmail())) {
+            throw new ExistingResourcesException(
+                ErrorCode.EMAIL_ALREADY_EXISTS,
+                "Email '" + registerRequest.getEmail() + "' is already registered"
+            );
+        }
+
+        // Create new user
+        User user = new User();
+        user.setFullName(registerRequest.getFullName());
+        user.setEmail(registerRequest.getEmail());
+        user.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
+        user.setPhoneNumber(registerRequest.getPhoneNumber());
+        user.setStatus(UserStatus.ACTIVE);
+        user.setVerified(false);
+        User savedUser = userRepository.save(user);
+
+        log.info("User registered successfully with id: {}, email: {}", savedUser.getId(), savedUser.getEmail());
+
+        return userMapper.toUserResponse(savedUser);
+    }
 
     @Override
     public TokenResponse authenticate(SignInRequest signInRequest) {

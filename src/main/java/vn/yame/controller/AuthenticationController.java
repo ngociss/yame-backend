@@ -2,8 +2,11 @@ package vn.yame.controller;
 
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -15,6 +18,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import vn.yame.dto.reponse.ResponseData;
 import vn.yame.dto.reponse.TokenResponse;
+import vn.yame.dto.reponse.UserResponse;
+import vn.yame.dto.request.RegisterRequest;
 import vn.yame.dto.request.ResetPasswordRequest;
 import vn.yame.dto.request.SignInRequest;
 import vn.yame.service.AuthenticationService;
@@ -27,6 +32,31 @@ import vn.yame.service.AuthenticationService;
 @RequiredArgsConstructor
 public class AuthenticationController {
     private final AuthenticationService authenticationService;
+
+    @PostMapping("/register")
+    @Operation(
+        summary = "User registration",
+        description = "Register a new user account with email, password, full name and phone number"
+    )
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "201", description = "User registered successfully"),
+        @ApiResponse(responseCode = "400", description = "Invalid input or email already exists"),
+        @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    public ResponseEntity<ResponseData<UserResponse>> register(@Valid @RequestBody RegisterRequest registerRequest) {
+        log.info("REST request to register user with email: {}", registerRequest.getEmail());
+
+        UserResponse userResponse = authenticationService.register(registerRequest);
+
+        return ResponseEntity
+            .status(HttpStatus.CREATED)
+            .body(ResponseData.success(
+                HttpStatus.CREATED.value(),
+                true,
+                "User registered successfully",
+                userResponse
+            ));
+    }
 
     @PostMapping("/access")
     @Operation(summary = "User login", description = "Authenticate user and return access token and refresh token")

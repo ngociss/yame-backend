@@ -8,10 +8,7 @@ import lombok.Setter;
 @Table(name = "materials")
 @Getter
 @Setter
-public class Material {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class Material extends BaseEntity {
     private String name;
     private String description;
     private boolean isActive;

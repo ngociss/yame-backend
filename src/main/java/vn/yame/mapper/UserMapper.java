@@ -18,15 +18,17 @@ import java.util.stream.Collectors;
 @Mapper(componentModel = "spring")
 public interface UserMapper {
 
-
     User toEntity(UserCreateRequest req);
 
     @Mapping(source = "status", target = "status")
     @Mapping(target = "roleNames", expression = "java(mapRoles(user.getRoles()))")
     UserResponse toResponse(User user);
 
+    @Mapping(source = "status", target = "status")
+    @Mapping(target = "roleNames", expression = "java(mapRoles(user.getRoles()))")
+    UserResponse toUserResponse(User user);
+
     @Mapping(target = "id", ignore = true)
-        // tránh override id
     void updateUserFromDto(UserUpdateRequest dto, @MappingTarget User entity);
 
     default Set<String> mapRoles(Set<Role> roles) {

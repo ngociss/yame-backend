@@ -10,6 +10,7 @@ import org.springframework.security.authentication.LockedException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
+import vn.yame.common.enums.ErrorCode;
 import vn.yame.dto.reponse.ResponseData;
 
 import java.io.IOException;
@@ -23,32 +24,37 @@ public class CustomAuthEntryPoint implements AuthenticationEntryPoint {
                          AuthenticationException authException) throws IOException {
 
         response.setContentType("application/json;charset=UTF-8");
-        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // 🔹 dùng 401 thay vì 403
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 
+        String errorCode;
         String message;
-        String error;
 
         if (authException instanceof AccountExpiredException) {
-            error = "Account Expired";
+            errorCode = ErrorCode.ACCOUNT_LOCKED.getCode();
             message = "User account has expired";
         } else if (authException instanceof DisabledException) {
-            error = "Account Disabled";
+            errorCode = ErrorCode.ACCOUNT_LOCKED.getCode();
             message = "User account is disabled";
         } else if (authException instanceof LockedException) {
-            error = "Account Locked";
+            errorCode = ErrorCode.ACCOUNT_LOCKED.getCode();
             message = "User account is locked";
         } else if (authException instanceof BadCredentialsException) {
-            error = "Bad Credentials";
+            errorCode = ErrorCode.INVALID_CREDENTIALS.getCode();
             message = "Invalid email or password";
         } else {
-            error = "Unauthorized";
+            errorCode = ErrorCode.UNAUTHORIZED.getCode();
             message = authException.getMessage();
         }
 
-        ResponseData<Object> res = new ResponseData<>();
-        res.setStatusCode(HttpServletResponse.SC_UNAUTHORIZED); // 🔹 đồng bộ với status response
-        res.setSuccess(false);
-        res.setError(error);
-        res.setMessage(message);
+        ResponseData<Object> res = ResponseData.error(
+                HttpServletResponse.SC_UNAUTHORIZED,
+                errorCode,
+                message,
+                request.getRequestURI()
+        );
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.findAndRegisterModules();
+        response.getWriter().write(mapper.writeValueAsString(res));
     }
 }

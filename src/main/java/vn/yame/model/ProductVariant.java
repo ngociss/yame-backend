@@ -3,29 +3,16 @@ package vn.yame.model;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
 @Table(name = "product_variants")
 @Getter
 @Setter
-
-public class ProductVariant {
-    @Id
-    @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
-    private Long id;
+public class ProductVariant extends BaseEntity {
     private int stockQuantity;
     private String skuCode;
-
-    @CreationTimestamp
-    private LocalDateTime createdAt;
-
-    @UpdateTimestamp
-    private LocalDateTime updatedAt;
     private boolean isVerified;
 
     @ManyToOne
@@ -39,5 +26,4 @@ public class ProductVariant {
     @ManyToOne
     @JoinColumn(name = "product_id")
     private Product product;
-
 }
