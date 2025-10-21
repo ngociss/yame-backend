@@ -21,6 +21,4 @@ public class PermissionRequest {
 
     @NotNull(message = "Resource ID is required")
     private Long resourceId;
-
-    private boolean isActive = true;
 }

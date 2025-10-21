@@ -117,4 +117,21 @@ public class RoleServiceImpl implements RoleService {
 
         log.info("Role soft deleted successfully with id: {}", id);
     }
+
+    @Override
+    public RoleResponse updateStatus(Long id, CommonStatus status) {
+        log.info("Updating status for role id: {} to {}", id, status);
+
+        Role role = roleRepository.findRoleById(id)
+                .orElseThrow(() -> new NotFoundResourcesException(
+                    ErrorCode.ROLE_NOT_FOUND,
+                    "Role not found with id: " + id
+                ));
+
+        role.setStatus(status);
+        Role updatedRole = roleRepository.save(role);
+
+        log.info("Role status updated successfully for id: {}", id);
+        return roleMapper.toResponse(updatedRole);
+    }
 }

@@ -168,10 +168,25 @@ public class CategoryServiceImpl implements CategoryService {
     public List<CategoryResponse> getActiveCategories() {
         log.info("Fetching active categories");
 
-        List<Category> categories = categoryRepository.findAll().stream()
-            .filter(category -> category.getStatus() == CommonStatus.ACTIVE)
-            .collect(Collectors.toList());
+        List<Category> categories = categoryRepository.findByStatus(CommonStatus.ACTIVE);
 
         return categoryMapper.toResponseList(categories);
+    }
+
+    @Override
+    public CategoryResponse updateStatus(Long id, CommonStatus status) {
+        log.info("Updating status for category id: {} to {}", id, status);
+
+        Category category = categoryRepository.findById(id)
+            .orElseThrow(() -> new NotFoundResourcesException(
+                ErrorCode.CATEGORY_NOT_FOUND,
+                "Category not found with id: " + id
+            ));
+
+        category.setStatus(status);
+        Category updatedCategory = categoryRepository.save(category);
+
+        log.info("Category status updated successfully for id: {}", id);
+        return categoryMapper.toResponse(updatedCategory);
     }
 }

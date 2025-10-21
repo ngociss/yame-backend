@@ -175,19 +175,36 @@ public class PermissionController {
         ));
     }
 
-    @PatchMapping("/{id}/toggle-active")
-    @Operation(summary = "Toggle permission active status", description = "Toggle the active status of a permission")
-    public ResponseEntity<ResponseData<String>> togglePermissionActive(
-            @Parameter(description = "Permission ID") @PathVariable Long id) {
-        log.info("Toggling active status for permission id: {}", id);
+    @PatchMapping("/{id}/status")
+    @Operation(summary = "Update permission status", description = "Update the status of a permission (ACTIVE/INACTIVE)")
+    public ResponseEntity<ResponseData<PermissionResponse>> updatePermissionStatus(
+            @Parameter(description = "Permission ID") @PathVariable Long id,
+            @Valid @RequestBody vn.yame.dto.request.UpdateStatusRequest request) {
+        log.info("Updating status for permission id: {} to {}", id, request.getStatus());
 
-        permissionService.toggleActive(id);
+        PermissionResponse permission = permissionService.updateStatus(id, request.getStatus());
 
         return ResponseEntity.ok(ResponseData.success(
                 HttpStatus.OK.value(),
                 true,
-                "Permission active status toggled successfully",
-                null
+                "Permission status updated successfully",
+                permission
+        ));
+    }
+
+    @PatchMapping("/{id}/verify")
+    @Operation(summary = "Verify permission", description = "Mark a permission as verified")
+    public ResponseEntity<ResponseData<PermissionResponse>> verifyPermission(
+            @Parameter(description = "Permission ID") @PathVariable Long id) {
+        log.info("Verifying permission id: {}", id);
+
+        PermissionResponse permission = permissionService.verifyPermission(id);
+
+        return ResponseEntity.ok(ResponseData.success(
+                HttpStatus.OK.value(),
+                true,
+                "Permission verified successfully",
+                permission
         ));
     }
 

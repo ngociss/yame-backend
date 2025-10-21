@@ -1,6 +1,7 @@
 package vn.yame.dto.reponse;
 
 import lombok.Data;
+import vn.yame.common.enums.CommonStatus;
 
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -11,7 +12,7 @@ public class PermissionResponse {
     private String name;
     private String description;
     private String code;
-    private boolean isActive;
+    private CommonStatus status;
     private boolean isVerified;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

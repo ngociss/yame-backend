@@ -109,6 +109,29 @@ public class RoleController {
         ));
     }
 
+    @PatchMapping("/{id}/status")
+    @Operation(summary = "Update role status", description = "Update the status of a role (ACTIVE/INACTIVE)")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Role status updated successfully"),
+        @ApiResponse(responseCode = "404", description = "Role not found"),
+        @ApiResponse(responseCode = "400", description = "Invalid status value")
+    })
+    public ResponseEntity<ResponseData<RoleResponse>> updateRoleStatus(
+            @Parameter(description = "Role ID", required = true)
+            @PathVariable Long id,
+            @Valid @RequestBody vn.yame.dto.request.UpdateStatusRequest request) {
+        log.info("REST request to update status for role id: {} to {}", id, request.getStatus());
+
+        RoleResponse roleResponse = roleService.updateStatus(id, request.getStatus());
+
+        return ResponseEntity.ok(ResponseData.success(
+            HttpStatus.OK.value(),
+            true,
+            "Role status updated successfully",
+            roleResponse
+        ));
+    }
+
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete a role", description = "Delete a role by ID. Cannot delete if role has users.")
     @ApiResponses(value = {

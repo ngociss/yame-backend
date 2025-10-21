@@ -73,6 +73,18 @@ public class ResourceController {
         );
     }
 
+    @PatchMapping("/{id}/status")
+    @Operation(summary = "Update resource status")
+//    @PreAuthorize("hasAuthority('RESOURCE_UPDATE')")
+    public ResponseEntity<ResponseData<ResourceResponse>> updateResourceStatus(
+            @Parameter(description = "Resource ID") @PathVariable Long id,
+            @Valid @RequestBody vn.yame.dto.request.UpdateStatusRequest request) {
+        ResourceResponse updatedResource = resourceService.updateStatus(id, request.getStatus());
+        return ResponseEntity.ok(
+                ResponseData.success(HttpStatus.OK.value(), true, "Resource status updated successfully", updatedResource)
+        );
+    }
+
     @PatchMapping("/{id}")
     @Operation(summary = "Delete a resource")
 //    @PreAuthorize("hasAuthority('RESOURCE_DELETE')")

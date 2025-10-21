@@ -2,8 +2,6 @@ package vn.yame.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -231,6 +229,29 @@ public class CategoryController {
         ));
     }
 
+    @PatchMapping("/{id}/status")
+    @Operation(
+        summary = "Update category status",
+        description = "Update the status of a category (ACTIVE/INACTIVE)"
+    )
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Category status updated successfully"),
+        @ApiResponse(responseCode = "404", description = "Category not found"),
+        @ApiResponse(responseCode = "400", description = "Invalid status value")
+    })
+    public ResponseEntity<ResponseData<CategoryResponse>> updateCategoryStatus(
+            @Parameter(description = "Category ID", required = true)
+            @PathVariable Long id,
+            @Valid @RequestBody vn.yame.dto.request.UpdateStatusRequest request) {
+        log.info("REST request to update status for category id: {} to {}", id, request.getStatus());
 
+        CategoryResponse response = categoryService.updateStatus(id, request.getStatus());
+
+        return ResponseEntity.ok(ResponseData.success(
+            HttpStatus.OK.value(),
+            true,
+            "Category status updated successfully",
+            response
+        ));
+    }
 }
-

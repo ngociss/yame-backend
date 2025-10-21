@@ -1,5 +1,6 @@
 package vn.yame.service;
 
+import vn.yame.common.enums.CommonStatus;
 import vn.yame.dto.reponse.RoleResponse;
 import vn.yame.dto.request.RoleRequest;
 
@@ -15,4 +16,6 @@ public interface RoleService {
     public RoleResponse updateRole(Long id, RoleRequest roleRequest);
 
     public void deleteRole(Long id);
+
+    public RoleResponse updateStatus(Long id, CommonStatus status);
 }

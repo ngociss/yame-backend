@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import vn.yame.common.enums.CommonStatus;
 
 import java.time.LocalDateTime;
 
@@ -16,7 +17,7 @@ public class CategoryResponse {
     private String name;
     private String slug;
     private String description;
-    private boolean isActive;
+    private CommonStatus status;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdAt;
@@ -24,4 +25,3 @@ public class CategoryResponse {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime updatedAt;
 }
-

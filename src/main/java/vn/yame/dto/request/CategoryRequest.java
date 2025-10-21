@@ -6,7 +6,6 @@ import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import vn.yame.common.enums.CommonStatus;
 
 @Data
 @NoArgsConstructor
@@ -25,7 +24,4 @@ public class CategoryRequest {
 
     @Size(max = 500, message = "Description cannot exceed 500 characters")
     private String description;
-
-    private CommonStatus status;
 }
-

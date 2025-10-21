@@ -1,8 +1,6 @@
 package vn.yame.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import vn.yame.common.enums.CommonStatus;
@@ -85,4 +83,12 @@ public class ResourceService {
          resourceRepository.save(resource);
     }
 
+    public ResourceResponse updateStatus(Long id, CommonStatus status) {
+        Resource resource = resourceRepository.findById(id)
+                .orElseThrow(() -> new NotFoundResourcesException("Resource not found with id: " + id));
+
+        resource.setStatus(status);
+        Resource savedResource = resourceRepository.save(resource);
+        return resourceMapper.toResponse(savedResource);
+    }
 }

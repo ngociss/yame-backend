@@ -200,4 +200,32 @@ public class PermissionServiceImpl implements PermissionService {
     public boolean existsByName(String name) {
         return permissionRepository.existsByName(name);
     }
+
+    @Override
+    public PermissionResponse updateStatus(Long id, CommonStatus status) {
+        log.info("Updating status for permission id: {} to {}", id, status);
+
+        Permission permission = permissionRepository.findById(id)
+                .orElseThrow(() -> new NotFoundResourcesException("Permission not found with id: " + id));
+
+        permission.setStatus(status);
+        Permission savedPermission = permissionRepository.save(permission);
+
+        log.info("Permission status updated successfully for id: {}", id);
+        return permissionMapper.toResponse(savedPermission);
+    }
+
+    @Override
+    public PermissionResponse verifyPermission(Long id) {
+        log.info("Verifying permission with id: {}", id);
+
+        Permission permission = permissionRepository.findById(id)
+                .orElseThrow(() -> new NotFoundResourcesException("Permission not found with id: " + id));
+
+        permission.setVerified(true);
+        Permission savedPermission = permissionRepository.save(permission);
+
+        log.info("Permission verified successfully for id: {}", id);
+        return permissionMapper.toResponse(savedPermission);
+    }
 }

@@ -2,6 +2,7 @@ package vn.yame.service;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import vn.yame.common.enums.CommonStatus;
 import vn.yame.dto.reponse.PermissionResponse;
 import vn.yame.dto.request.PermissionRequest;
 
@@ -35,4 +36,8 @@ public interface PermissionService {
     boolean existsByCode(String code);
 
     boolean existsByName(String name);
+
+    PermissionResponse updateStatus(Long id, CommonStatus status);
+
+    PermissionResponse verifyPermission(Long id);
 }
