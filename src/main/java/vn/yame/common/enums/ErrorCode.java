@@ -119,7 +119,12 @@ public enum ErrorCode {
     // ========== STOCK ==========
     INSUFFICIENT_STOCK(HttpStatus.BAD_REQUEST, "STOCK_001", "Insufficient stock"),
     STOCK_UPDATE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "STOCK_002", "Failed to update stock"),
-    NEGATIVE_STOCK_NOT_ALLOWED(HttpStatus.BAD_REQUEST, "STOCK_003", "Stock cannot be negative");
+    NEGATIVE_STOCK_NOT_ALLOWED(HttpStatus.BAD_REQUEST, "STOCK_003", "Stock cannot be negative"),
+
+    // ======== AUTHENTICATION ========
+    AUTHENTICATION_FAILED(HttpStatus.UNAUTHORIZED, "AUTH_008", "Email or password is incorrect");
+
+
 
     private final HttpStatus httpStatus;
     private final String code;

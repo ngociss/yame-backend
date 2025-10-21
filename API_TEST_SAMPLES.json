@@ -1,0 +1,451 @@
+{
+  "API_TEST_SAMPLES": {
+    "RESOURCE_API": {
+      "base_url": "http://localhost:8080/api/v1/resources",
+
+      "1_CREATE_RESOURCE": {
+        "method": "POST",
+        "endpoint": "/api/v1/resources",
+        "description": "Create a new resource",
+        "body": {
+          "name": "User Management",
+          "description": "Manage users in the system"
+        }
+      },
+
+      "2_CREATE_MORE_RESOURCES": [
+        {
+          "name": "Product Management",
+          "description": "Manage products and inventory"
+        },
+        {
+          "name": "Order Management",
+          "description": "Manage customer orders"
+        },
+        {
+          "name": "Category Management",
+          "description": "Manage product categories"
+        },
+        {
+          "name": "Report Management",
+          "description": "View and generate reports"
+        }
+      ],
+
+      "3_UPDATE_RESOURCE": {
+        "method": "PUT",
+        "endpoint": "/api/v1/resources/{id}",
+        "description": "Update resource by ID (replace {id} with actual ID)",
+        "body": {
+          "name": "User Management Updated",
+          "description": "Updated description for user management"
+        }
+      },
+
+      "4_GET_ALL_RESOURCES": {
+        "method": "GET",
+        "endpoint": "/api/v1/resources",
+        "description": "Get all resources"
+      },
+
+      "5_GET_RESOURCES_WITH_PAGINATION": {
+        "method": "GET",
+        "endpoint": "/api/v1/resources/page?page=0&size=10&sortBy=createdAt&direction=desc",
+        "description": "Get resources with pagination"
+      },
+
+      "6_GET_ACTIVE_RESOURCES": {
+        "method": "GET",
+        "endpoint": "/api/v1/resources/active",
+        "description": "Get only active resources"
+      },
+
+      "7_GET_RESOURCE_BY_ID": {
+        "method": "GET",
+        "endpoint": "/api/v1/resources/{id}",
+        "description": "Get resource by ID"
+      },
+
+      "8_SEARCH_RESOURCES": {
+        "method": "GET",
+        "endpoint": "/api/v1/resources/search?name=User&page=0&size=10",
+        "description": "Search resources by name"
+      },
+
+      "9_UPDATE_RESOURCE_STATUS": {
+        "method": "PATCH",
+        "endpoint": "/api/v1/resources/{id}/status",
+        "description": "Update resource status",
+        "body": {
+          "status": "INACTIVE"
+        },
+        "note": "Valid statuses: ACTIVE, INACTIVE, DELETED"
+      },
+
+      "10_DELETE_RESOURCE": {
+        "method": "DELETE",
+        "endpoint": "/api/v1/resources/{id}",
+        "description": "Soft delete resource (sets status to DELETED)"
+      }
+    },
+
+    "PERMISSION_API": {
+      "base_url": "http://localhost:8080/api/v1/permissions",
+      "prerequisites": "Create Resources first to get resourceId",
+
+      "1_CREATE_PERMISSION": {
+        "method": "POST",
+        "endpoint": "/api/v1/permissions",
+        "description": "Create a new permission",
+        "body": {
+          "name": "Create User",
+          "description": "Permission to create new users",
+          "code": "USER_CREATE",
+          "resourceId": 1
+        },
+        "note": "Replace resourceId with actual Resource ID from Resource API"
+      },
+
+      "2_CREATE_MORE_PERMISSIONS": [
+        {
+          "name": "Read User",
+          "description": "Permission to view users",
+          "code": "USER_READ",
+          "resourceId": 1
+        },
+        {
+          "name": "Update User",
+          "description": "Permission to update users",
+          "code": "USER_UPDATE",
+          "resourceId": 1
+        },
+        {
+          "name": "Delete User",
+          "description": "Permission to delete users",
+          "code": "USER_DELETE",
+          "resourceId": 1
+        },
+        {
+          "name": "Create Product",
+          "description": "Permission to create products",
+          "code": "PRODUCT_CREATE",
+          "resourceId": 2
+        },
+        {
+          "name": "Read Product",
+          "description": "Permission to view products",
+          "code": "PRODUCT_READ",
+          "resourceId": 2
+        },
+        {
+          "name": "Update Product",
+          "description": "Permission to update products",
+          "code": "PRODUCT_UPDATE",
+          "resourceId": 2
+        },
+        {
+          "name": "Delete Product",
+          "description": "Permission to delete products",
+          "code": "PRODUCT_DELETE",
+          "resourceId": 2
+        },
+        {
+          "name": "View Orders",
+          "description": "Permission to view orders",
+          "code": "ORDER_READ",
+          "resourceId": 3
+        },
+        {
+          "name": "Manage Orders",
+          "description": "Permission to manage orders",
+          "code": "ORDER_MANAGE",
+          "resourceId": 3
+        }
+      ],
+
+      "3_UPDATE_PERMISSION": {
+        "method": "PUT",
+        "endpoint": "/api/v1/permissions/{id}",
+        "description": "Update permission by ID",
+        "body": {
+          "name": "Create User Updated",
+          "description": "Updated permission to create new users",
+          "code": "USER_CREATE",
+          "resourceId": 1
+        }
+      },
+
+      "4_GET_ALL_PERMISSIONS": {
+        "method": "GET",
+        "endpoint": "/api/v1/permissions?page=0&size=20&sortBy=id&sortDir=asc",
+        "description": "Get all permissions with pagination"
+      },
+
+      "5_GET_PERMISSION_BY_ID": {
+        "method": "GET",
+        "endpoint": "/api/v1/permissions/{id}",
+        "description": "Get permission by ID"
+      },
+
+      "6_GET_PERMISSION_BY_CODE": {
+        "method": "GET",
+        "endpoint": "/api/v1/permissions/code/USER_CREATE",
+        "description": "Get permission by code"
+      },
+
+      "7_SEARCH_PERMISSIONS_BY_NAME": {
+        "method": "GET",
+        "endpoint": "/api/v1/permissions?name=User&page=0&size=10",
+        "description": "Search permissions by name"
+      },
+
+      "8_GET_PERMISSIONS_BY_RESOURCE": {
+        "method": "GET",
+        "endpoint": "/api/v1/permissions/resource/{resourceId}",
+        "description": "Get all permissions for a specific resource"
+      },
+
+      "9_GET_ACTIVE_PERMISSIONS": {
+        "method": "GET",
+        "endpoint": "/api/v1/permissions/active",
+        "description": "Get all active permissions"
+      },
+
+      "10_GET_PERMISSIONS_BY_CODES": {
+        "method": "POST",
+        "endpoint": "/api/v1/permissions/codes",
+        "description": "Get permissions by multiple codes",
+        "body": [
+          "USER_CREATE",
+          "USER_READ",
+          "USER_UPDATE",
+          "PRODUCT_READ"
+        ]
+      },
+
+      "11_UPDATE_PERMISSION_STATUS": {
+        "method": "PATCH",
+        "endpoint": "/api/v1/permissions/{id}/status",
+        "description": "Update permission status",
+        "body": {
+          "status": "INACTIVE"
+        },
+        "note": "Valid statuses: ACTIVE, INACTIVE (NOT DELETED - use delete endpoint for that)"
+      },
+
+      "12_VERIFY_PERMISSION": {
+        "method": "PATCH",
+        "endpoint": "/api/v1/permissions/{id}/verify",
+        "description": "Mark permission as verified"
+      },
+
+      "13_CHECK_PERMISSION_CODE_EXISTS": {
+        "method": "GET",
+        "endpoint": "/api/v1/permissions/exists/code/USER_CREATE",
+        "description": "Check if permission code exists"
+      },
+
+      "14_CHECK_PERMISSION_NAME_EXISTS": {
+        "method": "GET",
+        "endpoint": "/api/v1/permissions/exists/name/Create User",
+        "description": "Check if permission name exists"
+      },
+
+      "15_DELETE_PERMISSION": {
+        "method": "DELETE",
+        "endpoint": "/api/v1/permissions/{id}",
+        "description": "Soft delete permission (only if not assigned to any role)"
+      }
+    },
+
+    "ROLE_API": {
+      "base_url": "http://localhost:8080/api/v1/roles",
+      "prerequisites": "Create Permissions first to get permissionIds",
+
+      "1_CREATE_ROLE": {
+        "method": "POST",
+        "endpoint": "/api/v1/roles",
+        "description": "Create a new role",
+        "body": {
+          "name": "Admin",
+          "description": "Administrator with full access",
+          "permissionIds": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        },
+        "note": "Replace permissionIds with actual Permission IDs from Permission API"
+      },
+
+      "2_CREATE_MORE_ROLES": [
+        {
+          "name": "Manager",
+          "description": "Manager with limited access",
+          "permissionIds": [2, 3, 6, 7, 9]
+        },
+        {
+          "name": "User",
+          "description": "Regular user with basic access",
+          "permissionIds": [2, 6]
+        },
+        {
+          "name": "Guest",
+          "description": "Guest user with read-only access",
+          "permissionIds": [2, 6]
+        },
+        {
+          "name": "Super Admin",
+          "description": "Super administrator with all permissions",
+          "permissionIds": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        }
+      ],
+
+      "3_UPDATE_ROLE": {
+        "method": "PUT",
+        "endpoint": "/api/v1/roles/{id}",
+        "description": "Update role by ID",
+        "body": {
+          "name": "Admin Updated",
+          "description": "Updated administrator role",
+          "permissionIds": [1, 2, 3, 4]
+        }
+      },
+
+      "4_GET_ALL_ROLES": {
+        "method": "GET",
+        "endpoint": "/api/v1/roles",
+        "description": "Get all roles"
+      },
+
+      "5_GET_ROLE_BY_ID": {
+        "method": "GET",
+        "endpoint": "/api/v1/roles/{id}",
+        "description": "Get role by ID with permissions"
+      },
+
+      "6_GET_ROLE_BY_NAME": {
+        "method": "GET",
+        "endpoint": "/api/v1/roles/name/{name}",
+        "description": "Get role by name",
+        "example": "/api/v1/roles/name/Admin"
+      },
+
+      "7_ASSIGN_PERMISSIONS_TO_ROLE": {
+        "method": "POST",
+        "endpoint": "/api/v1/roles/{id}/permissions",
+        "description": "Assign permissions to a role",
+        "body": {
+          "permissionIds": [1, 2, 3, 4, 5]
+        }
+      },
+
+      "8_REMOVE_PERMISSION_FROM_ROLE": {
+        "method": "DELETE",
+        "endpoint": "/api/v1/roles/{roleId}/permissions/{permissionId}",
+        "description": "Remove a specific permission from a role"
+      },
+
+      "9_DELETE_ROLE": {
+        "method": "DELETE",
+        "endpoint": "/api/v1/roles/{id}",
+        "description": "Delete role by ID"
+      }
+    },
+
+    "TESTING_WORKFLOW": {
+      "description": "Recommended order for testing APIs",
+      "steps": [
+        {
+          "step": 1,
+          "action": "Create Resources",
+          "apis": ["RESOURCE_API.1_CREATE_RESOURCE", "RESOURCE_API.2_CREATE_MORE_RESOURCES"],
+          "note": "Save the returned resource IDs (e.g., id: 1, 2, 3, 4, 5)"
+        },
+        {
+          "step": 2,
+          "action": "Create Permissions",
+          "apis": ["PERMISSION_API.1_CREATE_PERMISSION", "PERMISSION_API.2_CREATE_MORE_PERMISSIONS"],
+          "note": "Use resource IDs from step 1. Save permission IDs (e.g., id: 1-10)"
+        },
+        {
+          "step": 3,
+          "action": "Verify Permissions",
+          "apis": ["PERMISSION_API.12_VERIFY_PERMISSION"],
+          "note": "Verify each permission after creation"
+        },
+        {
+          "step": 4,
+          "action": "Create Roles",
+          "apis": ["ROLE_API.1_CREATE_ROLE", "ROLE_API.2_CREATE_MORE_ROLES"],
+          "note": "Use permission IDs from step 2"
+        },
+        {
+          "step": 5,
+          "action": "Test Read Operations",
+          "apis": [
+            "RESOURCE_API.4_GET_ALL_RESOURCES",
+            "PERMISSION_API.4_GET_ALL_PERMISSIONS",
+            "ROLE_API.4_GET_ALL_ROLES"
+          ]
+        },
+        {
+          "step": 6,
+          "action": "Test Update Operations",
+          "apis": [
+            "RESOURCE_API.3_UPDATE_RESOURCE",
+            "PERMISSION_API.3_UPDATE_PERMISSION",
+            "ROLE_API.3_UPDATE_ROLE"
+          ]
+        },
+        {
+          "step": 7,
+          "action": "Test Status Management",
+          "apis": [
+            "RESOURCE_API.9_UPDATE_RESOURCE_STATUS",
+            "PERMISSION_API.11_UPDATE_PERMISSION_STATUS"
+          ]
+        },
+        {
+          "step": 8,
+          "action": "Test Search & Filter",
+          "apis": [
+            "RESOURCE_API.8_SEARCH_RESOURCES",
+            "PERMISSION_API.7_SEARCH_PERMISSIONS_BY_NAME",
+            "PERMISSION_API.8_GET_PERMISSIONS_BY_RESOURCE"
+          ]
+        }
+      ]
+    },
+
+    "COMMON_STATUS_VALUES": {
+      "description": "Valid status values for status update endpoints",
+      "values": ["ACTIVE", "INACTIVE", "DELETED"],
+      "note": "For permissions, use DELETE endpoint instead of setting status to DELETED"
+    },
+
+    "ERROR_SCENARIOS_TO_TEST": {
+      "duplicate_resource_name": {
+        "test": "Try creating resource with existing name",
+        "expected": "400 Bad Request - ExistingResourcesException"
+      },
+      "duplicate_permission_code": {
+        "test": "Try creating permission with existing code",
+        "expected": "400 Bad Request - ExistingResourcesException"
+      },
+      "delete_permission_with_roles": {
+        "test": "Try deleting permission assigned to roles",
+        "expected": "400 Bad Request - Cannot delete, assigned to roles"
+      },
+      "invalid_resource_id": {
+        "test": "Try creating permission with non-existent resourceId",
+        "expected": "404 Not Found - NotFoundResourcesException"
+      },
+      "verify_already_verified": {
+        "test": "Try verifying already verified permission",
+        "expected": "400 Bad Request - Already verified"
+      },
+      "update_deleted_permission": {
+        "test": "Try updating status of deleted permission",
+        "expected": "400 Bad Request - Cannot update deleted permission"
+      }
+    }
+  }
+}
+

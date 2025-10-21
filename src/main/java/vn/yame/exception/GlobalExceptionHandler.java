@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -108,6 +109,19 @@ public class GlobalExceptionHandler {
                         HttpStatus.INTERNAL_SERVER_ERROR.value(),
                         ErrorCode.INTERNAL_SERVER_ERROR.getCode(),
                         "An unexpected error occurred. Please contact support.",
+                        request.getRequestURI()
+                ));
+    }
+
+    @ExceptionHandler(InternalAuthenticationServiceException.class)
+    public ResponseEntity<ResponseData<Object>> handleInternalAuthenticationServiceException(
+            InternalAuthenticationServiceException ex, HttpServletRequest request) {
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body(ResponseData.error(
+                        HttpStatus.UNAUTHORIZED.value(),
+                        ErrorCode.AUTHENTICATION_FAILED.getCode(),
+                        "Authentication failed: " + ex.getMessage(),
                         request.getRequestURI()
                 ));
     }

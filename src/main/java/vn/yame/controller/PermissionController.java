@@ -159,21 +159,7 @@ public class PermissionController {
         ));
     }
 
-    @PostMapping("/codes")
-    @Operation(summary = "Get permissions by codes", description = "Retrieve permissions by a list of codes")
-    public ResponseEntity<ResponseData<List<PermissionResponse>>> getPermissionsByCodes(
-            @RequestBody Set<String> codes) {
-        log.info("Fetching permissions by codes: {}", codes);
 
-        List<PermissionResponse> permissions = permissionService.findByCodes(codes);
-
-        return ResponseEntity.ok(ResponseData.success(
-                HttpStatus.OK.value(),
-                true,
-                "Permissions retrieved successfully",
-                permissions
-        ));
-    }
 
     @PatchMapping("/{id}/status")
     @Operation(summary = "Update permission status", description = "Update the status of a permission (ACTIVE/INACTIVE)")

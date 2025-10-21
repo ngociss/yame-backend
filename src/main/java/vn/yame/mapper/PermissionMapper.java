@@ -34,6 +34,7 @@ public interface PermissionMapper {
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "verified", ignore = true)
+    @Mapping(target = "status", ignore = true)
     void updateEntityFromRequest(@MappingTarget Permission permission, PermissionRequest request);
 
     @Named("rolesToRoleNames")

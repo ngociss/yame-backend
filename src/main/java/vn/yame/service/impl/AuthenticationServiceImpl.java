@@ -19,6 +19,7 @@ import vn.yame.dto.request.ResetPasswordRequest;
 import vn.yame.dto.request.SignInRequest;
 import vn.yame.exception.ExistingResourcesException;
 import vn.yame.exception.InvalidDataException;
+import vn.yame.exception.NotFoundResourcesException;
 import vn.yame.mapper.UserMapper;
 import vn.yame.model.Role;
 import vn.yame.model.Token;
@@ -77,7 +78,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         user.setVerified(false);
         // Lấy role mặc định từ database
         Role customerRole = roleRepository.findByName("CUSTOMER")
-                .orElseThrow(() -> new RuntimeException("Default CUSTOMER role not found"));
+                .orElseThrow(() -> new NotFoundResourcesException("Default CUSTOMER role not found"));
         user.setRoles(new HashSet<>(Set.of(customerRole)));
 
         User savedUser = userRepository.save(user);

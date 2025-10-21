@@ -36,24 +36,29 @@ public class PermissionServiceImpl implements PermissionService {
     public PermissionResponse create(PermissionRequest request) {
         log.info("Creating new permission with code: {}", request.getCode());
 
+        // Validate code format (should be uppercase with underscores)
+        String code = request.getCode().trim().toUpperCase();
+
         // Check if permission code already exists
-        if (permissionRepository.existsByCode(request.getCode())) {
-            throw new ExistingResourcesException("Permission with code '" + request.getCode() + "' already exists");
+        if (permissionRepository.existsByCode(code)) {
+            throw new ExistingResourcesException("Permission with code '" + code + "' already exists");
         }
 
         // Check if permission name already exists
-        if (permissionRepository.existsByName(request.getName())) {
+        if (permissionRepository.existsByName(request.getName().trim())) {
             throw new ExistingResourcesException("Permission with name '" + request.getName() + "' already exists");
         }
 
-        // Find resource
+        // Find resource and verify it exists
         Resource resource = resourceRepository.findById(request.getResourceId())
                 .orElseThrow(() -> new NotFoundResourcesException("Resource not found with id: " + request.getResourceId()));
 
         // Create permission
         Permission permission = permissionMapper.toEntity(request);
+        permission.setCode(code); // Set normalized code
         permission.setResource(resource);
-        permission.setVerified(true); // Default verified for new permissions
+        permission.setStatus(CommonStatus.ACTIVE);
+        permission.setVerified(false); // Changed to false - should be verified by admin
 
         Permission savedPermission = permissionRepository.save(permission);
         log.info("Permission created successfully with id: {}", savedPermission.getId());
@@ -68,23 +73,33 @@ public class PermissionServiceImpl implements PermissionService {
         Permission existingPermission = permissionRepository.findById(id)
                 .orElseThrow(() -> new NotFoundResourcesException("Permission not found with id: " + id));
 
-        if (!existingPermission.getCode().equals(request.getCode()) &&
-            permissionRepository.existsByCode(request.getCode())) {
-            throw new ExistingResourcesException("Permission with code '" + request.getCode() + "' already exists");
+        // Normalize code
+        String code = request.getCode().trim().toUpperCase();
+
+        // Check if code is being changed and if new code already exists
+        if (!existingPermission.getCode().equals(code) &&
+            permissionRepository.existsByCode(code)) {
+            throw new ExistingResourcesException("Permission with code '" + code + "' already exists");
         }
 
-        if (!existingPermission.getName().equals(request.getName()) &&
-            permissionRepository.existsByName(request.getName())) {
-            throw new ExistingResourcesException("Permission with name '" + request.getName() + "' already exists");
+        // Check if name is being changed and if new name already exists
+        String name = request.getName().trim();
+        if (!existingPermission.getName().equals(name) &&
+            permissionRepository.existsByName(name)) {
+            throw new ExistingResourcesException("Permission with name '" + name + "' already exists");
         }
 
+        // Update resource if changed
         if (!existingPermission.getResource().getId().equals(request.getResourceId())) {
             Resource resource = resourceRepository.findById(request.getResourceId())
                     .orElseThrow(() -> new NotFoundResourcesException("Resource not found with id: " + request.getResourceId()));
             existingPermission.setResource(resource);
         }
 
-        permissionMapper.updateEntityFromRequest(existingPermission, request);
+        // Update basic fields
+        existingPermission.setName(name);
+        existingPermission.setCode(code);
+        existingPermission.setDescription(request.getDescription());
 
         Permission savedPermission = permissionRepository.save(existingPermission);
         log.info("Permission updated successfully with id: {}", savedPermission.getId());
@@ -208,6 +223,15 @@ public class PermissionServiceImpl implements PermissionService {
         Permission permission = permissionRepository.findById(id)
                 .orElseThrow(() -> new NotFoundResourcesException("Permission not found with id: " + id));
 
+        // Validate status transition
+        if (permission.getStatus() == CommonStatus.DELETED) {
+            throw new ExistingResourcesException("Cannot update status of deleted permission");
+        }
+
+        if (status == CommonStatus.DELETED) {
+            throw new ExistingResourcesException("Use delete endpoint to delete permission");
+        }
+
         permission.setStatus(status);
         Permission savedPermission = permissionRepository.save(permission);
 
@@ -221,6 +245,14 @@ public class PermissionServiceImpl implements PermissionService {
 
         Permission permission = permissionRepository.findById(id)
                 .orElseThrow(() -> new NotFoundResourcesException("Permission not found with id: " + id));
+
+        if (permission.isVerified()) {
+            throw new ExistingResourcesException("Permission is already verified");
+        }
+
+        if (permission.getStatus() == CommonStatus.DELETED) {
+            throw new ExistingResourcesException("Cannot verify deleted permission");
+        }
 
         permission.setVerified(true);
         Permission savedPermission = permissionRepository.save(permission);

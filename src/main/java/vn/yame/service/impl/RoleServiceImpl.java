@@ -12,11 +12,15 @@ import vn.yame.exception.ExistingResourcesException;
 import vn.yame.exception.InvalidDataException;
 import vn.yame.exception.NotFoundResourcesException;
 import vn.yame.mapper.RoleMapper;
+import vn.yame.model.Permission;
 import vn.yame.model.Role;
+import vn.yame.repository.PermissionRepository;
 import vn.yame.repository.RoleRepository;
 import vn.yame.service.RoleService;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -25,6 +29,7 @@ import java.util.List;
 public class RoleServiceImpl implements RoleService {
     private final RoleRepository roleRepository;
     private final RoleMapper roleMapper;
+    private final PermissionRepository permissionRepository;
 
     @Override
     public RoleResponse createRole(RoleRequest roleRequest) {
@@ -38,7 +43,30 @@ public class RoleServiceImpl implements RoleService {
         }
 
         Role role = roleMapper.toEntity(roleRequest);
-        role.setStatus(CommonStatus.INACTIVE);
+        role.setStatus(CommonStatus.ACTIVE);
+
+        // Handle permissions
+        if (roleRequest.getPermissionIds() != null && !roleRequest.getPermissionIds().isEmpty()) {
+            Set<Permission> permissions = new HashSet<>();
+            for (Long permissionId : roleRequest.getPermissionIds()) {
+                Permission permission = permissionRepository.findById(permissionId)
+                    .orElseThrow(() -> new NotFoundResourcesException(
+                        ErrorCode.PERMISSION_NOT_FOUND,
+                        "Permission not found with id: " + permissionId
+                    ));
+
+                // Check if permission is active and verified
+                if (permission.getStatus() != CommonStatus.ACTIVE) {
+                    log.warn("Permission {} is not active, skipping", permissionId);
+                    continue;
+                }
+
+                permissions.add(permission);
+            }
+            role.setPermissions(permissions);
+            log.info("Assigned {} permissions to role", permissions.size());
+        }
+
         Role savedRole = roleRepository.save(role);
 
         log.info("Role created successfully with id: {}", savedRole.getId());
@@ -87,6 +115,28 @@ public class RoleServiceImpl implements RoleService {
         }
 
         roleMapper.updateEntity(role, roleRequest);
+
+        // Handle permissions update
+        if (roleRequest.getPermissionIds() != null) {
+            Set<Permission> permissions = new HashSet<>();
+            for (Long permissionId : roleRequest.getPermissionIds()) {
+                Permission permission = permissionRepository.findById(permissionId)
+                    .orElseThrow(() -> new NotFoundResourcesException(
+                        ErrorCode.PERMISSION_NOT_FOUND,
+                        "Permission not found with id: " + permissionId
+                    ));
+
+                if (permission.getStatus() != CommonStatus.ACTIVE) {
+                    log.warn("Permission {} is not active, skipping", permissionId);
+                    continue;
+                }
+
+                permissions.add(permission);
+            }
+            role.setPermissions(permissions);
+            log.info("Updated role with {} permissions", permissions.size());
+        }
+
         Role updatedRole = roleRepository.save(role);
 
         log.info("Role updated successfully with id: {}", id);
