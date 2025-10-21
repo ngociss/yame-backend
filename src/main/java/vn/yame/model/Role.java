@@ -4,6 +4,7 @@ package vn.yame.model;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import vn.yame.common.enums.CommonStatus;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -15,6 +16,7 @@ import java.util.Set;
 public class Role extends BaseEntity {
     private String name;
     private String description;
+    private CommonStatus status;
 
     @ManyToMany
     @JoinTable(

@@ -64,7 +64,8 @@ public class UserServiceImpl implements UserService {
             throw new ExistingResourcesException("Email already exists");
         }
         Set<Role> roles = req.getRoleNames().stream()
-                .map(roleRepository::findByName)
+                .map((roleName) -> roleRepository.findByName(roleName)
+                        .orElseThrow(() -> new NotFoundResourcesException("Role not found: " + roleName)))
                 .collect(Collectors.toSet());
         User user = userMapper.toEntity(req);
         user.setRoles(roles);

@@ -20,12 +20,17 @@ import vn.yame.dto.request.SignInRequest;
 import vn.yame.exception.ExistingResourcesException;
 import vn.yame.exception.InvalidDataException;
 import vn.yame.mapper.UserMapper;
+import vn.yame.model.Role;
 import vn.yame.model.Token;
 import vn.yame.model.User;
+import vn.yame.repository.RoleRepository;
 import vn.yame.repository.UserRepository;
 import vn.yame.service.AuthenticationService;
 import vn.yame.service.JwtService;
 import vn.yame.service.TokenService;
+
+import java.util.HashSet;
+import java.util.Set;
 
 
 @Service
@@ -39,6 +44,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final TokenService tokenService;
     private final PasswordEncoder passwordEncoder;
     private final UserMapper userMapper;
+    private final RoleRepository roleRepository;
 
     @Override
     @Transactional
@@ -69,6 +75,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         user.setPhoneNumber(registerRequest.getPhoneNumber());
         user.setStatus(UserStatus.ACTIVE);
         user.setVerified(false);
+        // Lấy role mặc định từ database
+        Role customerRole = roleRepository.findByName("CUSTOMER")
+                .orElseThrow(() -> new RuntimeException("Default CUSTOMER role not found"));
+        user.setRoles(new HashSet<>(Set.of(customerRole)));
+
         User savedUser = userRepository.save(user);
 
         log.info("User registered successfully with id: {}, email: {}", savedUser.getId(), savedUser.getEmail());
