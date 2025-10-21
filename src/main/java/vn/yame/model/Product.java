@@ -3,6 +3,7 @@ package vn.yame.model;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import vn.yame.common.enums.CommonStatus;
 import vn.yame.common.enums.ProductStatus;
 
 import java.math.BigDecimal;
@@ -17,8 +18,12 @@ public class Product extends BaseEntity {
     private String slug;
     private BigDecimal basePrice;
     private BigDecimal discountPrice;
-    private boolean isActive;
-    private ProductStatus status;
+
+    @Enumerated(EnumType.STRING)
+    private CommonStatus status = CommonStatus.ACTIVE;
+
+    @Enumerated(EnumType.STRING)
+    private ProductStatus productStatus;
 
     @ManyToOne
     @JoinColumn(name = "category_id")
@@ -27,5 +32,4 @@ public class Product extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "material_id")
     private Material material;
-
 }

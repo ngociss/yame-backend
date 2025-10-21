@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import vn.yame.common.enums.CommonStatus;
 import vn.yame.model.Permission;
 
 import java.util.List;
@@ -19,7 +20,7 @@ public interface PermissionRepository extends JpaRepository<Permission, Long> {
 
     Optional<Permission> findByName(String name);
 
-    List<Permission> findByIsActiveTrue();
+    List<Permission> findByStatus(CommonStatus status);
 
     Page<Permission> findByNameContainingIgnoreCase(String name, Pageable pageable);
 
@@ -36,4 +37,3 @@ public interface PermissionRepository extends JpaRepository<Permission, Long> {
     @Query("SELECT p FROM Permission p LEFT JOIN FETCH p.resource WHERE p.id = :id")
     Optional<Permission> findByIdWithResource(@Param("id") Long id);
 }
-

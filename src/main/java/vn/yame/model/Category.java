@@ -14,5 +14,7 @@ public class Category extends BaseEntity {
     @Column(unique = true, nullable = false)
     private String slug;
     private String description;
-    private CommonStatus status;
+
+    @Enumerated(EnumType.STRING)
+    private CommonStatus status = CommonStatus.ACTIVE;
 }

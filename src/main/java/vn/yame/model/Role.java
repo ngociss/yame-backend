@@ -16,7 +16,9 @@ import java.util.Set;
 public class Role extends BaseEntity {
     private String name;
     private String description;
-    private CommonStatus status;
+
+    @Enumerated(EnumType.STRING)
+    private CommonStatus status = CommonStatus.INACTIVE;
 
     @ManyToMany
     @JoinTable(

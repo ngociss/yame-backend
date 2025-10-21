@@ -3,8 +3,7 @@ package vn.yame.model;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.util.List;
+import vn.yame.common.enums.CommonStatus;
 
 @Entity
 @Table(name = "product_variants")
@@ -13,7 +12,9 @@ import java.util.List;
 public class ProductVariant extends BaseEntity {
     private int stockQuantity;
     private String skuCode;
-    private boolean isVerified;
+
+    @Enumerated(EnumType.STRING)
+    private CommonStatus status = CommonStatus.ACTIVE;
 
     @ManyToOne
     @JoinColumn(name = "color_id")

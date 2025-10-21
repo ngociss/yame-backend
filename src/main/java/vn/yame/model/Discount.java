@@ -4,6 +4,7 @@ package vn.yame.model;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import vn.yame.common.enums.CommonStatus;
 import vn.yame.common.enums.DiscountStatus;
 import vn.yame.common.enums.DiscountType;
 
@@ -20,7 +21,9 @@ public class Discount extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private DiscountType type;
     @Enumerated(EnumType.STRING)
-    private DiscountStatus status;
+    private DiscountStatus discountStatus;
+    @Enumerated(EnumType.STRING)
+    private CommonStatus status = CommonStatus.ACTIVE;
     @Column(precision = 10, scale = 2)
     private BigDecimal discountValue;
 
@@ -29,7 +32,6 @@ public class Discount extends BaseEntity {
     private Integer usageLimit;
     private LocalDateTime startAt;
     private LocalDateTime endAt;
-    private boolean isVerified;
 
     @OneToMany
     @JoinColumn(name = "discount_id")

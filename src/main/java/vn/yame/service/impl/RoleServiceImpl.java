@@ -95,21 +95,13 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     public void deleteRole(Long id) {
-        log.info("Deleting role with id: {}", id);
+        log.info("Soft deleting role with id: {}", id);
 
         Role role = roleRepository.findRoleById(id)
                 .orElseThrow(() -> new NotFoundResourcesException(
                     ErrorCode.ROLE_NOT_FOUND,
                     "Role not found with id: " + id
                 ));
-
-        // Check if role status is INACTIVE
-        if (role.getStatus() != CommonStatus.INACTIVE) {
-            throw new InvalidDataException(
-                ErrorCode.ROLE_ALREADY_EXISTS,
-                "Cannot delete role with ACTIVE status. Please set role to INACTIVE first."
-            );
-        }
 
         // Check if role has users
         if (role.getUsers() != null && !role.getUsers().isEmpty()) {
@@ -119,7 +111,10 @@ public class RoleServiceImpl implements RoleService {
             );
         }
 
-        roleRepository.delete(role);
-        log.info("Role deleted successfully with id: {}", id);
+        // Soft delete - set status to DELETED
+        role.setStatus(CommonStatus.DELETED);
+        roleRepository.save(role);
+
+        log.info("Role soft deleted successfully with id: {}", id);
     }
 }

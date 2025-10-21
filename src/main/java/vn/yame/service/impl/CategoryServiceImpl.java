@@ -94,7 +94,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public void deleteCategory(Long id) {
-        log.info("Deleting category with id: {}", id);
+        log.info("Soft deleting category with id: {}", id);
 
         Category category = categoryRepository.findById(id)
             .orElseThrow(() -> new NotFoundResourcesException(
@@ -102,16 +102,19 @@ public class CategoryServiceImpl implements CategoryService {
                 "Category not found with id: " + id
             ));
 
-        // TODO: Check if category has products before deleting
-//         if (category.getProducts() != null && !category.getProducts().isEmpty() && category.getStatus() == CommonStatus.ACTIVE) {
-//             throw new InvalidDataException(
-//                 ErrorCode.CATEGORY_HAS_PRODUCTS,
-//                 "Cannot delete category with existing products"
-//             );
-//         }
+        // Check if category has products (when product module is implemented)
+        // if (category.getProducts() != null && !category.getProducts().isEmpty()) {
+        //     throw new InvalidDataException(
+        //         ErrorCode.CATEGORY_HAS_PRODUCTS,
+        //         "Cannot delete category with existing products"
+        //     );
+        // }
 
-        categoryRepository.delete(category);
-        log.info("Category deleted successfully with id: {}", id);
+        // Soft delete - set status to DELETED
+        category.setStatus(CommonStatus.DELETED);
+        categoryRepository.save(category);
+
+        log.info("Category soft deleted successfully with id: {}", id);
     }
 
     @Override
@@ -171,6 +174,4 @@ public class CategoryServiceImpl implements CategoryService {
 
         return categoryMapper.toResponseList(categories);
     }
-
 }
-

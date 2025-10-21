@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import vn.yame.common.enums.CommonStatus;
 import vn.yame.dto.reponse.PermissionResponse;
 import vn.yame.dto.request.PermissionRequest;
 import vn.yame.exception.ExistingResourcesException;
@@ -133,7 +134,7 @@ public class PermissionServiceImpl implements PermissionService {
     @Override
     @Transactional(readOnly = true)
     public List<PermissionResponse> findActivePermissions() {
-        List<Permission> permissions = permissionRepository.findByIsActiveTrue();
+        List<Permission> permissions = permissionRepository.findByStatus(CommonStatus.ACTIVE);
         return permissions.stream()
                 .map(permissionMapper::toResponse)
                 .collect(Collectors.toList());
@@ -150,7 +151,7 @@ public class PermissionServiceImpl implements PermissionService {
 
     @Override
     public void delete(Long id) {
-        log.info("Deleting permission with id: {}", id);
+        log.info("Soft deleting permission with id: {}", id);
 
         Permission permission = permissionRepository.findById(id)
                 .orElseThrow(() -> new NotFoundResourcesException("Permission not found with id: " + id));
@@ -158,24 +159,34 @@ public class PermissionServiceImpl implements PermissionService {
         // Check if permission is being used by any roles
         if (permission.getRoles() != null && !permission.getRoles().isEmpty()) {
             throw new ExistingResourcesException("Cannot delete permission. It is assigned to " +
-                permission.getRoles().size() + " role(s)");
+                permission.getRoles().size() + " role(s). Please remove it from roles first.");
         }
 
-        permissionRepository.delete(permission);
-        log.info("Permission deleted successfully with id: {}", id);
+        // Soft delete - set status to DELETED
+        permission.setStatus(CommonStatus.DELETED);
+        permission.setVerified(false);
+        permissionRepository.save(permission);
+
+        log.info("Permission soft deleted successfully with id: {}", id);
     }
 
     @Override
     public void toggleActive(Long id) {
-        log.info("Toggling active status for permission with id: {}", id);
+        log.info("Toggling status for permission with id: {}", id);
 
         Permission permission = permissionRepository.findById(id)
                 .orElseThrow(() -> new NotFoundResourcesException("Permission not found with id: " + id));
 
-        permission.setActive(!permission.isActive());
+        // Toggle between ACTIVE and INACTIVE
+        if (permission.getStatus() == CommonStatus.ACTIVE) {
+            permission.setStatus(CommonStatus.INACTIVE);
+        } else if (permission.getStatus() == CommonStatus.INACTIVE) {
+            permission.setStatus(CommonStatus.ACTIVE);
+        }
+
         permissionRepository.save(permission);
 
-        log.info("Permission active status toggled to: {} for id: {}", permission.isActive(), id);
+        log.info("Permission status toggled to: {} for id: {}", permission.getStatus(), id);
     }
 
     @Override

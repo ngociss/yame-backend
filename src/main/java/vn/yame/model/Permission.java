@@ -3,6 +3,7 @@ package vn.yame.model;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import vn.yame.common.enums.CommonStatus;
 
 import java.util.Set;
 
@@ -20,8 +21,9 @@ public class Permission extends BaseEntity {
     @Column(nullable = false, unique = true)
     private String code;
 
-    @Column(name = "is_active")
-    private boolean isActive = true;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private CommonStatus status = CommonStatus.ACTIVE;
 
     @Column(name = "is_verified")
     private boolean isVerified = false;
