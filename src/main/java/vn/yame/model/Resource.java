@@ -9,11 +9,17 @@ import vn.yame.common.enums.CommonStatus;
 import java.util.List;
 
 @Entity
-@Table(name = "resources")
+@Table(name = "resources",
+       uniqueConstraints = {
+           @UniqueConstraint(name = "uk_resource_name", columnNames = "name")
+       })
 @Getter
 @Setter
 public class Resource extends BaseEntity {
+    @Column(nullable = false, unique = true, length = 100)
     private String name;
+
+    @Column(length = 255)
     private String description;
 
     @Enumerated(EnumType.STRING)

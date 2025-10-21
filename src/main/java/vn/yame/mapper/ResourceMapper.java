@@ -1,9 +1,6 @@
 package vn.yame.mapper;
 
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
-import org.mapstruct.Named;
+import org.mapstruct.*;
 import vn.yame.dto.reponse.ResourceResponse;
 import vn.yame.dto.request.ResourceRequest;
 import vn.yame.model.Permission;
@@ -12,7 +9,7 @@ import vn.yame.model.Resource;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface ResourceMapper {
 
     @Mapping(source = "permissions", target = "permissionNames", qualifiedByName = "permissionsToNames")
@@ -22,12 +19,15 @@ public interface ResourceMapper {
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "permissions", ignore = true)
+    @Mapping(target = "status", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
     Resource toEntity(ResourceRequest request);
 
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "permissions", ignore = true)
+    @Mapping(target = "status", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
     void updateEntityFromRequest(@MappingTarget Resource resource, ResourceRequest request);
@@ -43,7 +43,7 @@ public interface ResourceMapper {
     }
 
     @Named("permissionsToCount")
-    default int permissionsToCount(List<Permission> permissions) {
+    default Integer permissionsToCount(List<Permission> permissions) {
         return permissions != null ? permissions.size() : 0;
     }
 }
