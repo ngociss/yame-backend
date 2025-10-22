@@ -37,7 +37,4 @@ public class Product extends BaseEntity {
     @JoinColumn(name = "product_group_id")
     private ProductGroup productGroup;
 
-    @ManyToOne
-    @JoinColumn(name = "color_id")
-    private Color color;
 }

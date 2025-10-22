@@ -5,36 +5,19 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import vn.yame.common.enums.CommonStatus;
-import vn.yame.common.enums.ProductStatus;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProductResponse {
+public class ColorResponse {
 
     private Long id;
     private String name;
-    private String slug;
-    private BigDecimal basePrice;
-    private BigDecimal discountPrice;
+    private String hexCode;
+    private String description;
     private CommonStatus status;
-    private ProductStatus productStatus;
-
-    // Category info
-    private Long categoryId;
-    private String categoryName;
-    private String categorySlug;
-
-    // Material info
-    private Long materialId;
-    private String materialName;
-
-    // Product group info
-    private Long productGroupId;
-    private String productGroupName;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdAt;
@@ -42,3 +25,4 @@ public class ProductResponse {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime updatedAt;
 }
+

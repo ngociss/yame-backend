@@ -15,6 +15,8 @@ public interface ProductMapper {
     @Mapping(source = "category.slug", target = "categorySlug")
     @Mapping(source = "material.id", target = "materialId")
     @Mapping(source = "material.name", target = "materialName")
+    @Mapping(source = "productGroup.id", target = "productGroupId")
+    @Mapping(source = "productGroup.name", target = "productGroupName")
     ProductResponse toResponse(Product product);
 
     List<ProductResponse> toResponseList(List<Product> products);
@@ -26,6 +28,7 @@ public interface ProductMapper {
     @Mapping(target = "productStatus", ignore = true)
     @Mapping(target = "category", ignore = true)
     @Mapping(target = "material", ignore = true)
+    @Mapping(target = "productGroup", ignore = true)
     Product toEntity(ProductRequest request);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
@@ -36,6 +39,6 @@ public interface ProductMapper {
     @Mapping(target = "productStatus", ignore = true)
     @Mapping(target = "category", ignore = true)
     @Mapping(target = "material", ignore = true)
+    @Mapping(target = "productGroup", ignore = true)
     void updateEntity(@MappingTarget Product product, ProductRequest request);
 }
-

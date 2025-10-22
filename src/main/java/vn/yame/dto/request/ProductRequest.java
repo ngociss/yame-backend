@@ -35,5 +35,7 @@ public class ProductRequest {
 
     @Positive(message = "Material ID must be positive")
     private Long materialId;
-}
 
+    @Positive(message = "Product group ID must be positive")
+    private Long productGroupId;
+}

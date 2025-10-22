@@ -18,9 +18,11 @@ import vn.yame.mapper.ProductMapper;
 import vn.yame.model.Category;
 import vn.yame.model.Material;
 import vn.yame.model.Product;
+import vn.yame.model.ProductGroup;
 import vn.yame.repository.CategoryRepository;
 import vn.yame.repository.MaterialRepository;
 import vn.yame.repository.ProductRepository;
+import vn.yame.repository.ProductGroupRepository;
 import vn.yame.service.ProductService;
 
 import java.util.List;
@@ -35,6 +37,7 @@ public class ProductServiceImpl implements ProductService {
     private final CategoryRepository categoryRepository;
     private final MaterialRepository materialRepository;
     private final ProductMapper productMapper;
+    private final ProductGroupRepository productGroupRepository;
 
     @Override
     public ProductResponse createProduct(ProductRequest request) {
@@ -73,6 +76,16 @@ public class ProductServiceImpl implements ProductService {
                 ));
         }
 
+        // Validate product group if provided
+        ProductGroup productGroup = null;
+        if (request.getProductGroupId() != null) {
+            productGroup = productGroupRepository.findById(request.getProductGroupId())
+                .orElseThrow(() -> new NotFoundResourcesException(
+                    ErrorCode.INVALID_REQUEST,
+                    "Product group not found with id: " + request.getProductGroupId()
+                ));
+        }
+
         // Validate discount price
         if (request.getDiscountPrice() != null &&
             request.getDiscountPrice().compareTo(request.getBasePrice()) > 0) {
@@ -85,6 +98,7 @@ public class ProductServiceImpl implements ProductService {
         Product product = productMapper.toEntity(request);
         product.setCategory(category);
         product.setMaterial(material);
+        product.setProductGroup(productGroup);
         product.setStatus(CommonStatus.ACTIVE);
         product.setProductStatus(ProductStatus.ACTIVE);
 
@@ -139,6 +153,16 @@ public class ProductServiceImpl implements ProductService {
                 ));
         }
 
+        // Validate product group if provided
+        ProductGroup productGroup = null;
+        if (request.getProductGroupId() != null) {
+            productGroup = productGroupRepository.findById(request.getProductGroupId())
+                .orElseThrow(() -> new NotFoundResourcesException(
+                    ErrorCode.INVALID_REQUEST,
+                    "Product group not found with id: " + request.getProductGroupId()
+                ));
+        }
+
         // Validate discount price
         if (request.getDiscountPrice() != null &&
             request.getDiscountPrice().compareTo(request.getBasePrice()) > 0) {
@@ -151,6 +175,7 @@ public class ProductServiceImpl implements ProductService {
         productMapper.updateEntity(product, request);
         product.setCategory(category);
         product.setMaterial(material);
+        product.setProductGroup(productGroup);
 
         Product updatedProduct = productRepository.save(product);
 
@@ -314,4 +339,3 @@ public class ProductServiceImpl implements ProductService {
         return productMapper.toResponse(updatedProduct);
     }
 }
-
