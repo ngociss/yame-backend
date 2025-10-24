@@ -16,12 +16,15 @@ import org.springframework.security.web.FilterChainProxy;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 import vn.yame.common.enums.TokenType;
 import vn.yame.service.JwtService;
 import vn.yame.service.UserService;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 @Component
 @Slf4j
@@ -31,9 +34,29 @@ public class PreFilter extends OncePerRequestFilter {
     private final JwtService jwtService;
     private final UserService userService;
 
+
+    private final AntPathMatcher pathMatcher = new AntPathMatcher();
+
+    private final List<String> WHITE_LIST = Arrays.asList(
+            "/api/v1/auth/**",
+            "/actuator/**",
+            "/v3/**",
+            "/webjars/**",
+            "/swagger-ui/**"
+    );
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         log.info("doFilterInternal----------------------------------------");
+        String path = request.getRequestURI();
+
+        // Bỏ qua filter cho các endpoint trong WHITE_LIST
+        if (isWhiteListed(path)) {
+            log.info("Path {} is whitelisted, skipping token validation", path);
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         final String authorization = request.getHeader("Authorization");
         log.info("Authorization: {}", authorization);
         if(StringUtils.isBlank(authorization) || !authorization.startsWith("Bearer ")){
@@ -80,5 +103,11 @@ public class PreFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
 
 
+    }
+
+
+    private boolean isWhiteListed(String path) {
+        return WHITE_LIST.stream()
+                .anyMatch(pattern -> pathMatcher.match(pattern, path));
     }
 }

@@ -6,9 +6,7 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import vn.yame.dto.reponse.AddressResponse;
 import vn.yame.dto.request.AddressRequest;
-import vn.yame.dto.request.UserCreateRequest;
 import vn.yame.model.Address;
-import vn.yame.model.User;
 
 @Mapper(componentModel = "spring")
 public interface AddressMapper {
@@ -21,13 +19,13 @@ public interface AddressMapper {
     default void mapFullAddress(Address address, @MappingTarget AddressResponse response) {
         String fullAddress = String.join(", ",
                 address.getStreetAddress(),
-                address.getDistrict(),
-                address.getCity()
+                address.getWard(),
+                address.getProvince()
         );
         response.setAddress(fullAddress);
     }
 
     @Mapping(target = "id", ignore = true)
-        // tránh override id
+    @Mapping(target = "user", ignore = true)
     void updateAddress(AddressRequest dto, @MappingTarget Address entity);
 }

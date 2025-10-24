@@ -58,7 +58,7 @@ public class AuthenticationController {
             ));
     }
 
-    @PostMapping("/access")
+    @PostMapping("/login")
     @Operation(summary = "User login", description = "Authenticate user and return access token and refresh token")
     public ResponseEntity<ResponseData<TokenResponse>> login (@RequestBody SignInRequest signInRequest) {
         TokenResponse tokenResponse = authenticationService.authenticate(signInRequest);

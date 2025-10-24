@@ -18,6 +18,7 @@ import vn.yame.repository.UserRepository;
 import vn.yame.service.AddressService;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -41,11 +42,13 @@ public class AddressServiceImpl implements AddressService {
         Address address = addressMapper.toAddress(addressRequest);
         address.setUser(user);
 
-        // If this is the first address, set it as default
-        if (addressRepository.existsAddressByUser(user)) {
-            address.setDefault(false);
+        // If this is the first address or explicitly set as default, make it default
+        if (addressRequest.isDefault() || !addressRepository.existsAddressByUser(user)) {
+            // Remove default from existing addresses
+            setOtherAddressesAsNonDefault(user);
+            address.setDefaultAddress(true);
         } else {
-            address.setDefault(true);
+            address.setDefaultAddress(false);
         }
 
         Address savedAddress = addressRepository.save(address);
@@ -55,16 +58,41 @@ public class AddressServiceImpl implements AddressService {
     }
 
     @Override
-    public AddressResponse updateAddress(AddressRequest addressRequest) {
-        log.info("Updating address with id: {}", addressRequest.getUserId());
+    public AddressResponse updateAddress(Long id, AddressRequest addressRequest) {
+        log.info("Updating address with id: {}", id);
 
-        // Implementation for update
-        return null;
+        Address address = addressRepository.findById(id)
+            .orElseThrow(() -> new NotFoundResourcesException(
+                ErrorCode.ADDRESS_NOT_FOUND,
+                "Address not found with id: " + id
+            ));
+
+        // Verify user ownership
+        if (!address.getUser().getId().equals(addressRequest.getUserId())) {
+            throw new InvalidDataException(
+                ErrorCode.UNAUTHORIZED,
+                "You are not authorized to update this address"
+            );
+        }
+
+        // Update fields
+        addressMapper.updateAddress(addressRequest, address);
+
+        // Handle default flag
+        if (addressRequest.isDefault() && !address.isDefaultAddress()) {
+            setOtherAddressesAsNonDefault(address.getUser());
+            address.setDefaultAddress(true);
+        }
+
+        Address updatedAddress = addressRepository.save(address);
+        log.info("Address updated successfully with id: {}", updatedAddress.getId());
+
+        return addressMapper.toResponse(updatedAddress);
     }
 
     @Override
     public void deleteAddress(Long addressId) {
-        log.info("Soft deleting address with id: {}", addressId);
+        log.info("Deleting address with id: {}", addressId);
 
         Address address = addressRepository.findById(addressId)
             .orElseThrow(() -> new NotFoundResourcesException(
@@ -73,29 +101,50 @@ public class AddressServiceImpl implements AddressService {
             ));
 
         // Check if this is the default address
-        if (address.isDefault()) {
+        if (address.isDefaultAddress()) {
             throw new InvalidDataException(
                 ErrorCode.DEFAULT_ADDRESS_REQUIRED,
                 "Cannot delete default address. Please set another address as default first."
             );
         }
 
-        // Soft delete - simply remove from database (addresses can be hard deleted)
-        // Or you can add a 'deleted' flag if needed
         addressRepository.delete(address);
-
         log.info("Address deleted successfully with id: {}", addressId);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<AddressResponse> getAddresses() {
-        log.info("Fetching all addresses");
-        return List.of();
+    public List<AddressResponse> getAddressesByUser(Long userId) {
+        log.info("Fetching all addresses for user: {}", userId);
+
+        User user = userRepository.findById(userId)
+            .orElseThrow(() -> new NotFoundResourcesException(
+                ErrorCode.USER_NOT_FOUND,
+                "User not found with id: " + userId
+            ));
+
+        List<Address> addresses = addressRepository.findByUser(user);
+        return addresses.stream()
+                .map(addressMapper::toResponse)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public void setDefaultAddress(Long addressId, Long userId) {
+    @Transactional(readOnly = true)
+    public AddressResponse getAddressById(Long addressId) {
+        log.info("Fetching address with id: {}", addressId);
+
+        Address address = addressRepository.findById(addressId)
+            .orElseThrow(() -> new NotFoundResourcesException(
+                ErrorCode.ADDRESS_NOT_FOUND,
+                "Address not found with id: " + addressId
+            ));
+
+        return addressMapper.toResponse(address);
+    }
+
+    @Override
+    public AddressResponse setDefaultAddress(Long addressId, Long userId) {
         log.info("Setting default address: {} for user: {}", addressId, userId);
 
         User user = userRepository.findById(userId)
@@ -104,24 +153,37 @@ public class AddressServiceImpl implements AddressService {
                 "User not found with id: " + userId
             ));
 
-        // Remove default from existing address
-        Address existingDefaultAddress = addressRepository.findAddressByUserAndIsDefault(user, true)
-                .orElse(null);
-        if (existingDefaultAddress != null) {
-            existingDefaultAddress.setDefault(false);
-            addressRepository.save(existingDefaultAddress);
-        }
-
-        // Set new default address
         Address address = addressRepository.findById(addressId)
             .orElseThrow(() -> new NotFoundResourcesException(
                 ErrorCode.ADDRESS_NOT_FOUND,
                 "Address not found with id: " + addressId
             ));
 
-        address.setDefault(true);
-        addressRepository.save(address);
+        // Verify user ownership
+        if (!address.getUser().getId().equals(userId)) {
+            throw new InvalidDataException(
+                ErrorCode.UNAUTHORIZED,
+                "You are not authorized to modify this address"
+            );
+        }
+
+        // Remove default from other addresses
+        setOtherAddressesAsNonDefault(user);
+
+        // Set as default
+        address.setDefaultAddress(true);
+        Address savedAddress = addressRepository.save(address);
 
         log.info("Default address set successfully");
+        return addressMapper.toResponse(savedAddress);
+    }
+
+    private void setOtherAddressesAsNonDefault(User user) {
+        Address existingDefaultAddress = addressRepository.findByUserAndDefaultAddress(user, true)
+                .orElse(null);
+        if (existingDefaultAddress != null) {
+            existingDefaultAddress.setDefaultAddress(false);
+            addressRepository.save(existingDefaultAddress);
+        }
     }
 }

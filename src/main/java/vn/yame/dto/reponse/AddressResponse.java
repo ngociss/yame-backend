@@ -9,6 +9,9 @@ public class AddressResponse {
     private Long id;
     private String recipientName;
     private String phoneNumber;
-    private String address;
+    private String streetAddress;
+    private String ward;
+    private String province;
+    private String address; // Full address: streetAddress, ward, province
     private boolean isDefault;
 }

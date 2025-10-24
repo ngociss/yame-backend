@@ -13,9 +13,11 @@ public class Address extends BaseEntity {
     private String recipientName;
     private String phoneNumber;
     private String streetAddress;
-    private String city;
-    private String district;
-    private boolean isDefault;
+    private String ward;
+    private String province;
+
+    @Column(name = "is_default")
+    private boolean defaultAddress;
 
     @ManyToOne
     @JoinColumn(name = "user_id")

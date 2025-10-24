@@ -26,13 +26,13 @@ public class AddressRequest {
     @Size(min = 5, max = 255, message = "Street address must be between 5 and 255 characters")
     private String streetAddress;
 
-    @NotBlank(message = "City is required")
-    @Size(min = 2, max = 100, message = "City must be between 2 and 100 characters")
-    private String city;
+    @NotBlank(message = "Ward is required")
+    @Size(min = 2, max = 100, message = "Ward must be between 2 and 100 characters")
+    private String ward;
 
-    @NotBlank(message = "District is required")
-    @Size(min = 2, max = 100, message = "District must be between 2 and 100 characters")
-    private String district;
+    @NotBlank(message = "Province is required")
+    @Size(min = 2, max = 100, message = "Province must be between 2 and 100 characters")
+    private String province;
 
     private boolean isDefault = false;
 

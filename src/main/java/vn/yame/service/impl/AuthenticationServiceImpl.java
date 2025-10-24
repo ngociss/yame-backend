@@ -77,8 +77,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         user.setStatus(UserStatus.ACTIVE);
         user.setVerified(false);
         // Lấy role mặc định từ database
-        Role customerRole = roleRepository.findByName("CUSTOMER")
-                .orElseThrow(() -> new NotFoundResourcesException("Default CUSTOMER role not found"));
+        Role customerRole = roleRepository.findByName("USER")
+                .orElseThrow(() -> new NotFoundResourcesException("Default USER role not found"));
         user.setRoles(new HashSet<>(Set.of(customerRole)));
 
         User savedUser = userRepository.save(user);

@@ -6,13 +6,15 @@ import vn.yame.dto.request.AddressRequest;
 import java.util.List;
 
 public interface AddressService {
-    public AddressResponse createAddress(AddressRequest addressRequest);
+    AddressResponse createAddress(AddressRequest addressRequest);
 
-    public AddressResponse updateAddress(AddressRequest addressRequest);
+    AddressResponse updateAddress(Long id, AddressRequest addressRequest);
 
-    public void deleteAddress(Long addressId);
+    void deleteAddress(Long addressId);
 
-    public List<AddressResponse> getAddresses();
+    List<AddressResponse> getAddressesByUser(Long userId);
 
-    public void setDefaultAddress(Long addressId, Long userId);
+    AddressResponse getAddressById(Long addressId);
+
+    AddressResponse setDefaultAddress(Long addressId, Long userId);
 }

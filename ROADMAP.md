@@ -1,7 +1,87 @@
 # E-Commerce Backend Roadmap (Dựa trên toàn bộ Entity hiện có)
 
-Cập nhật: 2025-09-29  
+Cập nhật: 2025-10-25  
 Mục tiêu: Hoàn thiện hệ thống thương mại điện tử sử dụng đầy đủ các entity đã khai báo trong project hiện tại.
+
+---
+## 0. Tình Trạng Hiện Tại (Cập nhật 25/10/2025)
+
+### ✅ Đã Hoàn Thành
+**Phase 0 - Nền tảng (100%)**
+- ✅ BaseEntity với id, createdAt, updatedAt đã triển khai
+- ✅ @EnableJpaAuditing đã cấu hình (JpaAuditingConfig)
+- ✅ GlobalExceptionHandler với ErrorCode enum
+- ✅ Validation annotations trên DTO
+- ✅ Authentication & JWT đang hoạt động
+
+**Phase 1 - Catalog Core (100%)**
+- ✅ Category CRUD (CategoryController, CategoryService, CategoryRepository)
+- ✅ Product CRUD (ProductController, ProductService, ProductRepository)
+- ✅ ProductGroup CRUD (ProductGroupController, ProductGroupService, ProductGroupRepository)
+- ✅ Pagination & filtering cho Product
+- ✅ Mapper patterns đã áp dụng
+
+**Phase 2 - Variant & Media (80%)**
+- ✅ Size CRUD (SizeController, SizeService, SizeRepository)
+- ✅ Color CRUD (ColorController, ColorService, ColorRepository)
+- ✅ Material CRUD (MaterialController, MaterialService, MaterialRepository)
+- ✅ Entity models: ProductVariant, ProductImage đã có
+- ⚠️ ProductVariant & ProductImage API chưa hoàn thiện
+
+**Phase 8 - RBAC chi tiết (100%)**
+- ✅ Permission CRUD (PermissionController, PermissionService, PermissionRepository)
+- ✅ Role CRUD (RoleController, RoleService, RoleRepository)
+- ✅ Resource management (ResourceController, ResourceService, ResourceRepository)
+- ✅ Security configuration đã có
+
+**Khác:**
+- ✅ Address CRUD (AddressController, AddressService, AddressRepository)
+- ✅ User management (UserController, UserService, UserRepository)
+
+### ⚠️ Đang Triển Khai / Chưa Hoàn Thành
+- ⚠️ **Phase 2**: ProductVariant & ProductImage APIs (Models có, chưa có Service/Controller)
+- ❌ **Phase 3**: Cart & Discount (Models có, chưa có Service/Controller/Repository)
+- ❌ **Phase 4**: Order & Payment (Models có, chưa có Service/Controller/Repository)
+- ❌ **Phase 5**: Order Lifecycle & Status Management
+- ❌ **Phase 6**: Review & Rating (Models có, chưa có Service/Controller/Repository)
+- ❌ **Phase 7**: PurchaseOrder (Models có, chưa có Service/Controller/Repository)
+- ❌ **Phase 9**: Reporting & Optimization
+- ❌ **Phase 10**: Hardening & Observability
+
+### 🔴 Thiếu
+- ❌ Flyway migrations (V1__baseline.sql và các migration khác)
+- ❌ CartService, CartRepository, CartController
+- ❌ OrderService, OrderRepository, OrderController
+- ❌ PaymentService, PaymentRepository, PaymentController
+- ❌ ReviewService, ReviewRepository, ReviewController
+- ❌ DiscountService, DiscountRepository, DiscountController
+- ❌ PurchaseOrderService, PurchaseOrderRepository, PurchaseOrderController
+- ❌ ShippingMethodService, ShippingMethodRepository, ShippingMethodController
+- ❌ Integration tests cho end-to-end flow
+- ❌ Reporting APIs
+
+### 📊 Tiến Độ Tổng Quan
+- **Phase 0**: ✅ 100% (Hoàn thành)
+- **Phase 1**: ✅ 100% (Hoàn thành)
+- **Phase 2**: ⚠️ 80% (Cần hoàn thiện Variant & Image APIs)
+- **Phase 3**: ❌ 0% (Chưa bắt đầu - ưu tiên cao)
+- **Phase 4**: ❌ 10% (Chỉ có Address API)
+- **Phase 5**: ❌ 0% (Chưa bắt đầu)
+- **Phase 6**: ❌ 0% (Chưa bắt đầu)
+- **Phase 7**: ❌ 0% (Chưa bắt đầu)
+- **Phase 8**: ✅ 100% (Hoàn thành)
+- **Phase 9**: ❌ 0% (Chưa bắt đầu)
+- **Phase 10**: ❌ 0% (Chưa bắt đầu)
+
+**Tổng tiến độ dự án: ~35%**
+
+### 🎯 Ưu Tiên Tiếp Theo
+1. **CAO**: Thêm Flyway migrations để quản lý DB schema
+2. **CAO**: Hoàn thiện Phase 2 - ProductVariant & ProductImage APIs
+3. **CAO**: Triển khai Phase 3 - Cart & Discount (core business logic)
+4. **CAO**: Triển khai Phase 4 - Order & Payment flow
+5. **TRUNG**: Phase 5 - Order lifecycle management
+6. **TRUNG**: Phase 6 - Review system
 
 ---
 ## 1. Nguyên tắc & Giả định
@@ -281,4 +361,3 @@ T23 Rate limit login (10) LOW
 
 ---
 **Liên hệ / Ghi chú:** File này dùng làm định hướng, cập nhật khi có thay đổi yêu cầu.
-
