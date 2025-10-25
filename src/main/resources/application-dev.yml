@@ -20,6 +20,12 @@ spring:
   sql:
     init:
       mode: always
+  # Cấu hình upload file size
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 10MB
+      max-request-size: 10MB
 
 # application-dev.yml
 springdoc:
@@ -43,4 +49,7 @@ jwt:
   refreshKey: SN4n2ahiSXMlt2y7JSXcE8sNDTFm3hhyDBtFIYlt68w=
   resetKey: fYk/hel7E8o/QT/6vQIfbKfeMMt2ggCNIaHc2iiwdNI=
 
-
+cloudinary:
+  cloud-name: daypiprgr
+  api-key: 888232376992765
+  api-secret: 17mB4yTK7rPwfq4c5bMtHo8D_28
