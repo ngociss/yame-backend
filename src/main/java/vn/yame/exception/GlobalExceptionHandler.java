@@ -10,6 +10,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import vn.yame.common.enums.ErrorCode;
 import vn.yame.dto.reponse.ResponseData;
 
@@ -50,6 +51,23 @@ public class GlobalExceptionHandler {
                         ErrorCode.VALIDATION_FAILED.getMessage(),
                         request.getRequestURI(),
                         errors
+                ));
+    }
+
+    // Handler cho lỗi upload file quá lớn
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public ResponseEntity<ResponseData<Object>> handleMaxUploadSizeExceeded(
+            MaxUploadSizeExceededException ex, HttpServletRequest request) {
+
+        String maxSize = "10MB"; // Lấy từ config
+
+        return ResponseEntity
+                .status(HttpStatus.PAYLOAD_TOO_LARGE)
+                .body(ResponseData.error(
+                        HttpStatus.PAYLOAD_TOO_LARGE.value(),
+                        "FILE_TOO_LARGE",
+                        "File upload exceeds maximum size of " + maxSize + ". Please choose a smaller file.",
+                        request.getRequestURI()
                 ));
     }
 

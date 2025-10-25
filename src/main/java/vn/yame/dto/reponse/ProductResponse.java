@@ -22,6 +22,7 @@ public class ProductResponse {
     private BigDecimal discountPrice;
     private CommonStatus status;
     private ProductStatus productStatus;
+    private String imageUrl;
 
     // Category info
     private Long categoryId;

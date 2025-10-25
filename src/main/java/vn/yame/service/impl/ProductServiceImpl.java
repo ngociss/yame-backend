@@ -104,8 +104,13 @@ public class ProductServiceImpl implements ProductService {
 
         Product savedProduct = productRepository.save(product);
 
+
         log.info("Product created successfully with id: {}", savedProduct.getId());
-        return productMapper.toResponse(savedProduct);
+
+        // Map to response and set primary image URL
+        ProductResponse response = productMapper.toResponse(savedProduct);
+        setPrimaryImageUrl(response, savedProduct.getId());
+        return response;
     }
 
     @Override
@@ -180,7 +185,11 @@ public class ProductServiceImpl implements ProductService {
         Product updatedProduct = productRepository.save(product);
 
         log.info("Product updated successfully with id: {}", id);
-        return productMapper.toResponse(updatedProduct);
+
+        // Map to response and set primary image URL
+        ProductResponse response = productMapper.toResponse(updatedProduct);
+        setPrimaryImageUrl(response, updatedProduct.getId());
+        return response;
     }
 
     @Override
@@ -212,7 +221,9 @@ public class ProductServiceImpl implements ProductService {
                 "Product not found with id: " + id
             ));
 
-        return productMapper.toResponse(product);
+        ProductResponse response = productMapper.toResponse(product);
+        setPrimaryImageUrl(response, id);
+        return response;
     }
 
     @Override
@@ -235,7 +246,12 @@ public class ProductServiceImpl implements ProductService {
         log.info("Fetching all products");
 
         List<Product> products = productRepository.findAll();
-        return productMapper.toResponseList(products);
+        List<ProductResponse> responses = productMapper.toResponseList(products);
+
+        // Set primary image URL for each product
+        responses.forEach(response -> setPrimaryImageUrl(response, response.getId()));
+
+        return responses;
     }
 
     @Override
@@ -245,7 +261,12 @@ public class ProductServiceImpl implements ProductService {
             pageable.getPageNumber(), pageable.getPageSize());
 
         Page<Product> productsPage = productRepository.findAll(pageable);
-        return productsPage.map(productMapper::toResponse);
+
+        return productsPage.map(product -> {
+            ProductResponse response = productMapper.toResponse(product);
+            setPrimaryImageUrl(response, product.getId());
+            return response;
+        });
     }
 
     @Override
@@ -337,5 +358,18 @@ public class ProductServiceImpl implements ProductService {
 
         log.info("Product status updated successfully with id: {}", id);
         return productMapper.toResponse(updatedProduct);
+    }
+
+    // Helper method để set primary image URL
+    private void setPrimaryImageUrl(ProductResponse response, Long productId) {
+        try {
+            String primaryImageUrl = productRepository.getPriImageUrlById(productId);
+            if (primaryImageUrl != null) {
+                response.setImageUrl(primaryImageUrl);
+            }
+        } catch (Exception e) {
+            log.warn("Failed to get primary image for product {}: {}", productId, e.getMessage());
+            // Không throw exception, chỉ log warning
+        }
     }
 }

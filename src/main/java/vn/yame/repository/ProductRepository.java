@@ -24,8 +24,10 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     List<Product> findByStatus(CommonStatus status);
 
-    List<Product> findByProductStatus(ProductStatus productStatus);
+    @Query("SELECT pi.imageUrl FROM ProductImage pi WHERE pi.product.id = :id AND pi.isPrimary = true")
+    String getPriImageUrlById(Long id);
 
+    @Query("SELECT p FROM Product p WHERE p.category.id = :categoryId AND p.status = 'ACTIVE'")
     Page<Product> findByCategoryId(Long categoryId, Pageable pageable);
 
     Page<Product> findByMaterialId(Long materialId, Pageable pageable);

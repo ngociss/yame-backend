@@ -7,6 +7,8 @@ import vn.yame.common.enums.CommonStatus;
 import vn.yame.common.enums.ProductStatus;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "products")
@@ -37,4 +39,7 @@ public class Product extends BaseEntity {
     @JoinColumn(name = "product_group_id")
     private ProductGroup productGroup;
 
+    // Relationship với ProductImage để lấy ảnh chính
+    @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
+    private List<ProductImage> productImages = new ArrayList<>();
 }
