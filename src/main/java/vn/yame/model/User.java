@@ -37,6 +37,9 @@ public class User extends BaseEntity implements UserDetails, Serializable {
     @OneToMany(mappedBy = "user")
     private List<Address> addresses;
 
+    @OneToMany(mappedBy = "user")
+    private List<Order> orders;
+
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private Cart cart;
 

@@ -36,6 +36,10 @@ public class Order extends BaseEntity {
     @JoinColumn(name="discount_id" )
     private Discount discount;
 
+    @ManyToOne
+    @JoinColumn(name="user_id" )
+    private User user;
+
     @OneToOne(mappedBy = "order", cascade = CascadeType.ALL)
     private Payment payment;
 }

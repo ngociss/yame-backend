@@ -1,18 +1,16 @@
 services:
-  mysql:
-    image: mysql:8.0
-    container_name: mysql
-    cap_add:
-      - SYS_NICE
+  postgres:
+    image: postgres:16-alpine
+    container_name: yame_postgres
     restart: always
     environment:
-      - MYSQL_DATABASE=testdb
-      - MYSQL_ROOT_PASSWORD=password
+      POSTGRES_DB: yame_backend
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123456
     ports:
-      - '3306:3306'
+      - '5432:5432'
     volumes:
-      - mysql_data:/var/lib/mysql
-      - ./initdb.sql:/docker-entrypoint-initdb.d/initdb.sql
+      - postgres_data:/var/lib/postgresql/data
     networks:
       - default
 
@@ -21,8 +19,15 @@ services:
     build:
       context: ./
       dockerfile: Dockerfile
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/yame_backend
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: 123456
+      SPRING_PROFILES_ACTIVE: prod
     ports:
       - "8080:8080"
+    depends_on:
+      - postgres
     networks:
       - default
 
@@ -31,4 +36,4 @@ networks:
     name: backend-service
 
 volumes:
-  mysql_data:
+  postgres_data:
