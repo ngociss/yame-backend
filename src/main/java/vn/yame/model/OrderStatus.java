@@ -16,6 +16,8 @@ public class OrderStatus extends BaseEntity {
     private String name;
     private String description;
     private String code;
+
+    @Column(name = "is_final", nullable = false)
     private boolean isFinal;
 
     @OneToMany(mappedBy = "orderStatus")

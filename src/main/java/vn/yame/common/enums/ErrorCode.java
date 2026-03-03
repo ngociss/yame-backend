@@ -92,6 +92,7 @@ public enum ErrorCode {
     ORDER_CANNOT_CANCEL(HttpStatus.BAD_REQUEST, "ORD_004", "Cannot cancel order in current status"),
     ORDER_INVALID_STATUS_TRANSITION(HttpStatus.BAD_REQUEST, "ORD_005", "Invalid order status transition"),
     ORDER_STATUS_NOT_FOUND(HttpStatus.NOT_FOUND, "ORD_006", "Order status not found"),
+    ORDER_STATUS_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "ORD_008", "Order status already exists"),
     ORDER_ITEM_NOT_FOUND(HttpStatus.NOT_FOUND, "ORD_007", "Order item not found"),
 
     // ========== PAYMENT ==========
